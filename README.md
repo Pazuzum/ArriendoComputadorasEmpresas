@@ -1,1 +1,2 @@
-# aaaa
+# El front sería rentpc 
+
