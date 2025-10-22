@@ -1,2 +1,2 @@
-# El front sería rentpc 
+# El front es el archivo rentpc 
 
