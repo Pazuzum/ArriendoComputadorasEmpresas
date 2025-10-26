@@ -1,4 +1,5 @@
 import Reserva from '../modelos/reserva.modelo.js';
+import Usuario from '../modelos/usuario.modelo.js';
 import Producto from '../modelos/producto.modelo.js';
 import Stripe from 'stripe';
 
@@ -26,7 +27,16 @@ export const crearReserva = async (req, res) => {
     }
 
     const expiresAt = new Date(Date.now() + RESERVA_TTL_HORAS * 3600 * 1000);
-    const nueva = new Reserva({ contacto, items, total, notas, duracion, expiresAt });
+    const empresaId = req.user?.id || null;
+    // Asegurar contacto.email si faltara: usa el email del usuario autenticado
+    let contactoFinal = contacto || {};
+    if (!contactoFinal.email) {
+      try {
+        const u = empresaId ? await Usuario.findById(empresaId).select('email') : null;
+        if (u?.email) contactoFinal.email = u.email;
+      } catch { /* ignore fallback errors */ }
+    }
+    const nueva = new Reserva({ contacto: contactoFinal, items, total, notas, duracion, expiresAt, empresaId });
 
     // Si stripe disponible y el cliente solicitó pago immediato, crear PaymentIntent (preautorización)
     if (stripe && req.body.createPaymentIntent) {
@@ -99,6 +109,22 @@ export const listarReservas = async (req, res) => {
   } catch (error) {
     console.error('Error listarReservas', error);
     return res.status(500).json({ message: 'Error al listar reservas', error });
+  }
+};
+
+export const listarMisReservas = async (req, res) => {
+  try {
+    const empresaId = req.user?.id;
+    if (!empresaId) return res.status(401).json({ message: 'No autenticado' });
+    // También intentamos usar el email de contacto del usuario para contemplar reservas antiguas sin empresaId
+    const usuario = await Usuario.findById(empresaId).select('email');
+    const filterOr = [{ empresaId }];
+    if (usuario?.email) filterOr.push({ 'contacto.email': usuario.email });
+    const list = await Reserva.find({ $or: filterOr }).sort({ createdAt: -1 });
+    return res.json({ reservas: list });
+  } catch (error) {
+    console.error('Error listarMisReservas', error);
+    return res.status(500).json({ message: 'Error al listar mis reservas', error });
   }
 };
 

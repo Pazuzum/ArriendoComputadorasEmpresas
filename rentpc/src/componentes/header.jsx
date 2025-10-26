@@ -24,6 +24,7 @@ const Header = () => {
                         <>
                             <a href="/" className="py-2 hover:text-blue-600 transition-colors duration-200">Inicio</a>
                             <a href="/catalogo" className="py-2 hover:text-blue-600 transition-colors duration-200">Catálogo</a>
+                            <a href="/mis-cotizaciones" className="py-2 hover:text-blue-600 transition-colors duration-200">Mis cotizaciones</a>
                             <a href="/nosotros" className="py-2 hover:text-blue-600 transition-colors duration-200">Nosotros</a>
                             <span className="py-2 hover:text-blue-600 transition-colors duration-200">Hola, {user?.nombre || user?.username}</span>
                             {isAdmin && (

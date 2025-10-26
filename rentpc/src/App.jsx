@@ -7,9 +7,11 @@ import Login from './paginas/Login.jsx'
 import Register from './paginas/Register.jsx'
 import AdminPanel from './paginas/AdminPanel.jsx'
 import ProtectedAdmin from './paginas/ProtectedAdmin.jsx'
+import AdminProducts from './paginas/AdminProducts.jsx'
 import { AuthProvider } from './context/authContext.jsx'
 import Nosotros from './paginas/Nosotros.jsx'
 import { CotizacionProvider } from './Context/CotizacionContext.jsx'
+import MisCotizaciones from './paginas/MisCotizaciones.jsx'
 
 function App() {
   return (
@@ -24,11 +26,17 @@ function App() {
             <Route path="/catalogo" element={<Catalogo />} />
             {/* Product detail page removed per request; images no longer link to a detail route */}
             <Route path="/cotizar" element={<CotizacionResumen />} />
-          <Route path="/admin" element={
+            <Route path="/mis-cotizaciones" element={<MisCotizaciones />} />
+            <Route path="/admin" element={
             <ProtectedAdmin>
               <AdminPanel />
             </ProtectedAdmin>
           } />
+            <Route path="/admin/productos" element={
+              <ProtectedAdmin>
+                <AdminProducts />
+              </ProtectedAdmin>
+            } />
         </Routes>
       </BrowserRouter>
   </CotizacionProvider>

@@ -1,56 +1,32 @@
 import ProductCard from "../componentes/CardProduc.jsx";
 import Header from "../componentes/header.jsx";
 
-
-import { useState } from "react";
-
-const initialProductos = [
-    {
-        id: 1,
-        nombre: "NOTEBOOK DELL CORE I5",
-        descripcion: "8GB RAM, 256GB SSD, Windows 11",
-        precio: 45000,
-        imgs: [
-            "https://media.falabella.com/falabellaCL/135678583_01/w=100,h=100,fit=pad",
-            "https://media.falabella.com/falabellaCL/135678583_02/w=100,h=100,fit=pad",
-            "https://media.falabella.com/falabellaCL/135678583_03/w=100,h=100,fit=pad",
-            "https://media.falabella.com/falabellaCL/135678583_04/w=100,h=100,fit=pad",
-            "https://media.falabella.com/falabellaCL/135678583_05/w=100,h=100,fit=pad",
-        ],
-        disponibilidad: 40,
-    },
-    {
-        id: 2,
-        nombre: "NOTEBOOK HP",
-        descripcion: "8GB RAM, 256GB SSD, Windows 11",
-        precio: 40000,
-        imgs: [
-            "https://media.falabella.com/falabellaCL/113288081_01/w=100,h=100,fit=pad",
-        ],
-        disponibilidad: 40,
-    },
-    {
-        id: 3,
-        nombre: "TORRE GAMING",
-        descripcion: "16GB RAM, 1TB SSD, Windows 11",
-        precio: 65000,
-        imgs: [
-            "https://media.falabella.com/falabellaCL/135678583_01/w=100,h=100,fit=pad",
-        ],
-        disponibilidad: 40,
-    },
-];
-
-
+import { useState, useEffect } from "react";
+import { getProductos } from "../api/productos.js";
 
 const Catalogo = () => {
-    const [productosState, setProductosState] = useState(initialProductos);
+    const [productosState, setProductosState] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const fetchProductos = async () => {
+        setLoading(true);
+        try {
+            const res = await getProductos();
+            const list = (res.data.productos || []).map(p => ({ ...p, id: p._id, imgs: p.imgs && p.imgs.length ? p.imgs : ["https://via.placeholder.com/600x400?text=Sin+imagen"] }));
+            list.sort((a,b) => (a.nombre || '').localeCompare(b.nombre || ''));
+            setProductosState(list);
+        } catch (e) {
+            console.error('Error fetching productos', e);
+        } finally { setLoading(false); }
+    };
+
+    useEffect(()=>{ fetchProductos(); }, []);
 
     const handleReserve = (productId, quantity = 1) => {
         setProductosState((prev) =>
             prev.map((p) => {
                 if (p.id !== productId) return p;
-                const nuevaDisp = Math.max(0, (p.disponibilidad ?? 40) - quantity);
+                const nuevaDisp = Math.max(0, (p.disponibilidad ?? 0) - quantity);
                 return { ...p, disponibilidad: nuevaDisp };
             })
         );
@@ -72,7 +48,10 @@ const Catalogo = () => {
                     </p>
                 </div>
 
-                <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10">
+                                {loading && (
+                                    <div className="container mx-auto px-6 mb-6 text-center text-gray-600">Cargando productos…</div>
+                                )}
+                                <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10">
                     {productosState.map((p) => (
                     <ProductCard key={p.id} producto={p} onReserve={(qty)=> handleReserve(p.id, qty)} />
                     ))}

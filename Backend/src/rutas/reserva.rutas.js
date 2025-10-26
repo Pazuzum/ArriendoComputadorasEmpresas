@@ -1,5 +1,5 @@
 import express from 'express';
-import { crearReserva, obtenerReserva, listarReservas, confirmarReserva } from '../controles/reserva.controles.js';
+import { crearReserva, obtenerReserva, listarReservas, confirmarReserva, listarMisReservas } from '../controles/reserva.controles.js';
 import bodyParser from 'body-parser';
 import { authRequired, isAdmin } from '../middlewares/validacionToken.js';
 
@@ -8,6 +8,7 @@ const router = express.Router();
 router.post('/reservas', authRequired, crearReserva);
 router.get('/reservas/:id', authRequired, obtenerReserva);
 router.get('/reservas', authRequired, isAdmin, listarReservas);
+router.get('/reservas/mias', authRequired, listarMisReservas);
 router.post('/reservas/:id/confirm', authRequired, isAdmin, confirmarReserva);
 
 // Stripe webhook endpoint (needs raw body) - optional
