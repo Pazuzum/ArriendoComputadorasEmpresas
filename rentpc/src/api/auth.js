@@ -1,16 +1,25 @@
-import axios from "./axios.js"
+import axios from './axios.js'
 
-export const registerAPI= (user) => axios.post(`/rent/register`, user)
+// Registrar nuevo usuario
+export const registerAPI = (user) => axios.post('/rent/register', user)
 
-export const loginAPI=(user) => axios.post(`/rent/login`, user)
+// Iniciar sesión
+export const loginAPI = (user) => axios.post('/rent/login', user)
 
-export const verificarTokenRequest=() => axios.get("/verify")
+// Verificar token de autenticación
+export const verificarTokenRequest = () => axios.get('/verify')
 
+// Cerrar sesión
 export const logoutAPI = () => axios.post('/logout')
 
-export const getPendingUsers = () => axios.get(`/rent/admin/pending`)
+// Obtener usuarios pendientes de activación
+export const getPendingUsers = () => axios.get('/rent/admin/pending')
 
+// Activar usuario por ID
 export const activateUser = (id) => axios.put(`/rent/admin/activar/${id}`)
 
-export const getAllUsers = () => axios.get(`/rent/admin/users`)
+// Obtener todos los usuarios
+export const getAllUsers = () => axios.get('/rent/admin/users')
+
+// Desactivar usuario por ID
 export const deactivateUser = (id) => axios.put(`/rent/admin/desactivar/${id}`)

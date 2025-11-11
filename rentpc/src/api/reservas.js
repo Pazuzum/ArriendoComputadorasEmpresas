@@ -1,3 +1,4 @@
-import axios from './axios.js';
+import axios from './axios.js'
 
-export const getMisReservas = () => axios.get('/reservas/mias');
+// Obtener las reservas del usuario autenticado
+export const getMisReservas = () => axios.get('/reservas/mias')

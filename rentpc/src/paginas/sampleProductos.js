@@ -3,7 +3,7 @@ const productos = [
         id: 1,
         nombre: "NOTEBOOK DELL CORE I5",
         descripcion: "8GB RAM, 256GB SSD, Windows 11",
-        precio: 45000,
+        precio: 1800,
         imgs:[
             "https://media.falabella.com/falabellaCL/135678583_01/w=100,h=100,fit=pad",
             "https://media.falabella.com/falabellaCL/135678583_02/w=100,h=100,fit=pad",
@@ -15,7 +15,7 @@ const productos = [
         id: 2,
         nombre: "NOTEBOOK HP",
         descripcion: "8GB RAM, 256GB SSD, Windows 11",
-        precio: 40000,
+        precio: 1800,
         imgs:[
             "https://media.falabella.com/falabellaCL/113288081_01/w=100,h=100,fit=pad",
         ],
@@ -26,7 +26,7 @@ const productos = [
         id: 3,
         nombre: "TORRE GAMING",
         descripcion: "16GB RAM, 1TB SSD, Windows 11",
-        precio: 65000,
+        precio: 1800,
         imgs:[
             "https://media.falabella.com/falabellaCL/135678583_01/w=100,h=100,fit=pad",
         ],

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../componentes/header';
+import Header from '../componentes/Header.jsx';
 import { useCarrito } from '../Context/CarritoContext.jsx';
 
 

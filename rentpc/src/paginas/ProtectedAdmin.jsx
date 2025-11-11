@@ -1,24 +1,28 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../context/authContext.jsx";
+import React from 'react'
+import { Navigate } from 'react-router-dom'
+import { useAuth } from '../Context/authContext.jsx'
 
+// HOC para proteger rutas que requieren permisos de administrador
 const ProtectedAdmin = ({ children }) => {
-  const { isAuthenticated, loading, user } = useAuth();
+  const { isAuthenticated, loading, user } = useAuth()
 
-  if (loading) return <div className="p-6">Cargando...</div>;
+  // Mostrar cargando mientras se verifica autenticación
+  if (loading) return <div className="p-6">Cargando...</div>
 
-  // Debug helper: imprime el usuario en la consola para inspección
-  console.log("ProtectedAdmin user:", user, "isAuthenticated:", isAuthenticated);
+  // Log para debugging de permisos
+  console.log('ProtectedAdmin user:', user, 'isAuthenticated:', isAuthenticated)
 
+  // Redirigir a login si no está autenticado
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace />
   }
 
-  // Asumimos que el backend incluye un campo `role` en `user`
+  // Verificar si el usuario tiene rol de administrador
   const isAdmin =
-    user?.role === "admin" ||
-    (Array.isArray(user?.roles) && user.roles.some((r) => r.nombre === "admin" || r.name === "admin" || r === "admin"));
+    user?.role === 'admin' ||
+    (Array.isArray(user?.roles) && user.roles.some((r) => r.nombre === 'admin' || r.name === 'admin' || r === 'admin'))
 
+  // Mostrar mensaje de acceso denegado si no es admin
   if (!isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
@@ -36,10 +40,11 @@ const ProtectedAdmin = ({ children }) => {
           </div>
         </div>
       </div>
-    );
+    )
   }
 
-  return children;
-};
+  // Permitir acceso si es administrador
+  return children
+}
 
-export default ProtectedAdmin;
+export default ProtectedAdmin

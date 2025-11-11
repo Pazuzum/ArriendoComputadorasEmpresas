@@ -1,9 +1,10 @@
-import axios from "axios";
+import axios from 'axios'
 
+// Instancia de axios configurada para la aplicación
+// Usa URL base relativa para que el proxy del servidor de desarrollo reenvíe las peticiones /api y evitar CORS
 const instance = axios.create({
-    // Usar URL base relativa para que el proxy del servidor de desarrollo reenvíe las peticiones /api y evitar CORS
     baseURL: '/api',
     withCredentials: true
-});
+})
 
 export default instance

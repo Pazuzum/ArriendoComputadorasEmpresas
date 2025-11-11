@@ -1,47 +1,67 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from 'react'
 
-const CarritoContext = createContext();
+// Contexto del carrito de compras
+const CarritoContext = createContext()
 
+// Hook personalizado para usar el contexto del carrito
 export const useCarrito = () => {
-  const ctx = useContext(CarritoContext);
-  if (!ctx) throw new Error("useCarrito debe usarse dentro de CarritoProvider");
-  return ctx;
-};
-
-export const CarritoProvider = ({ children }) => {
-  const [items, setItems] = useState(() => {
-    try {
-      const raw = localStorage.getItem("carrito");
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
+    const ctx = useContext(CarritoContext)
+    if (!ctx) {
+        throw new Error('useCarrito debe usarse dentro de CarritoProvider')
     }
-  });
+    return ctx
+}
 
-  useEffect(() => {
-    localStorage.setItem("carrito", JSON.stringify(items));
-  }, [items]);
+// Proveedor del contexto del carrito
+export const CarritoProvider = ({ children }) => {
+    // Inicializar items desde localStorage
+    const [items, setItems] = useState(() => {
+        try {
+            const raw = localStorage.getItem('carrito')
+            return raw ? JSON.parse(raw) : []
+        } catch (error) {
+            console.error('Error al cargar carrito:', error)
+            return []
+        }
+    })
 
-  const addItem = (producto) => {
-    setItems((prev) => {
-      const found = prev.find((p) => p.id === producto.id);
-      if (found) return prev.map((p) => p.id === producto.id ? { ...p, qty: p.qty + 1 } : p);
-      return [...prev, { ...producto, qty: 1 }];
-    });
-  };
+    // Guardar items en localStorage cuando cambien
+    useEffect(() => {
+        localStorage.setItem('carrito', JSON.stringify(items))
+    }, [items])
 
-  const removeItem = (id) => setItems((prev) => prev.filter((p) => p.id !== id));
+    // Agregar producto al carrito
+    const addItem = (producto) => {
+        setItems((prev) => {
+            const found = prev.find((p) => p.id === producto.id)
+            if (found) {
+                return prev.map((p) => 
+                    p.id === producto.id ? { ...p, qty: p.qty + 1 } : p
+                )
+            }
+            return [...prev, { ...producto, qty: 1 }]
+        })
+    }
 
-  const clear = () => setItems([]);
+    // Eliminar producto del carrito
+    const removeItem = (id) => {
+        setItems((prev) => prev.filter((p) => p.id !== id))
+    }
 
-  const total = items.reduce((acc, it) => acc + (it.precio || 0) * (it.qty || 1), 0);
+    // Limpiar carrito
+    const clear = () => {
+        setItems([])
+    }
 
-  return (
-    <CarritoContext.Provider value={{ items, addItem, removeItem, clear, total }}>
-      {children}
-    </CarritoContext.Provider>
-  );
-};
+    // Calcular total del carrito
+    const total = items.reduce((acc, it) => acc + (it.precio || 0) * (it.qty || 1), 0)
 
-export default CarritoContext;
+    return (
+        <CarritoContext.Provider value={{ items, addItem, removeItem, clear, total }}>
+            {children}
+        </CarritoContext.Provider>
+    )
+}
+
+export default CarritoContext

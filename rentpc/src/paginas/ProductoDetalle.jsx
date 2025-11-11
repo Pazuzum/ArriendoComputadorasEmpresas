@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation, useParams, Link } from "react-router-dom";
-import Header from "../componentes/header.jsx";
+import Header from "../componentes/Header.jsx";
 import productosData from "./sampleProductos.js";
 
 const ProductoDetalle = () => {

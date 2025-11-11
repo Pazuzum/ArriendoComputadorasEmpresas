@@ -1,51 +1,79 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from 'react'
 
-const CotizacionContext = createContext();
+// Contexto de cotización
+const CotizacionContext = createContext()
 
+// Hook personalizado para usar el contexto de cotización
 export const useCotizacion = () => {
-  const ctx = useContext(CotizacionContext);
-  if (!ctx) throw new Error("useCotizacion debe usarse dentro de CotizacionProvider");
-  return ctx;
-};
-
-export const CotizacionProvider = ({ children }) => {
-  const [items, setItems] = useState(() => {
-    try {
-      const raw = localStorage.getItem("cotizacion");
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
+    const ctx = useContext(CotizacionContext)
+    if (!ctx) {
+        throw new Error('useCotizacion debe usarse dentro de CotizacionProvider')
     }
-  });
+    return ctx
+}
 
-  useEffect(() => {
-    localStorage.setItem("cotizacion", JSON.stringify(items));
-  }, [items]);
+// Proveedor del contexto de cotización
+export const CotizacionProvider = ({ children }) => {
+    // Inicializar items desde localStorage
+    const [items, setItems] = useState(() => {
+        try {
+            const raw = localStorage.getItem('cotizacion')
+            return raw ? JSON.parse(raw) : []
+        } catch (error) {
+            console.error('Error al cargar cotización:', error)
+            return []
+        }
+    })
 
-  const addToQuote = (producto, cantidad = 1) => {
-    const prodId = producto.id || producto._id;
-    const withId = { ...producto, id: prodId };
-    setItems((prev) => {
-      const found = prev.find((p) => (p.id || p._id) === prodId);
-      if (found) return prev.map((p) => (p.id || p._id) === prodId ? { ...p, qty: (p.qty || 0) + cantidad } : p);
-      return [...prev, { ...withId, qty: cantidad }];
-    });
-  };
+    // Guardar items en localStorage cuando cambien
+    useEffect(() => {
+        localStorage.setItem('cotizacion', JSON.stringify(items))
+    }, [items])
 
-  const removeItem = (id) => setItems((prev) => prev.filter((p) => (p.id || p._id) !== id));
+    // Agregar producto a la cotización
+    const addToQuote = (producto, cantidad = 1) => {
+        const prodId = producto.id || producto._id
+        const withId = { ...producto, id: prodId }
+        
+        setItems((prev) => {
+            const found = prev.find((p) => (p.id || p._id) === prodId)
+            if (found) {
+                return prev.map((p) => 
+                    (p.id || p._id) === prodId ? { ...p, qty: (p.qty || 0) + cantidad } : p
+                )
+            }
+            return [...prev, { ...withId, qty: cantidad }]
+        })
+    }
 
-  const updateQty = (id, qty) => setItems((prev) => prev.map((p) => (p.id || p._id) === id ? { ...p, qty: Math.max(1, qty) } : p));
+    // Eliminar producto de la cotización
+    const removeItem = (id) => {
+        setItems((prev) => prev.filter((p) => (p.id || p._id) !== id))
+    }
 
-  const clear = () => setItems([]);
+    // Actualizar cantidad de un producto
+    const updateQty = (id, qty) => {
+        setItems((prev) => 
+            prev.map((p) => 
+                (p.id || p._id) === id ? { ...p, qty: Math.max(1, qty) } : p
+            )
+        )
+    }
 
-  const total = items.reduce((acc, it) => acc + (it.precio || 0) * (it.qty || 1), 0);
+    // Limpiar cotización
+    const clear = () => {
+        setItems([])
+    }
 
-  return (
-    <CotizacionContext.Provider value={{ items, addToQuote, removeItem, updateQty, clear, total }}>
-      {children}
-    </CotizacionContext.Provider>
-  );
-};
+    // Calcular total de la cotización
+    const total = items.reduce((acc, it) => acc + (it.precio || 0) * (it.qty || 1), 0)
 
-export default CotizacionContext;
+    return (
+        <CotizacionContext.Provider value={{ items, addToQuote, removeItem, updateQty, clear, total }}>
+            {children}
+        </CotizacionContext.Provider>
+    )
+}
+
+export default CotizacionContext
