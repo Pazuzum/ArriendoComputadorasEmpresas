@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { getMisReservas } from '../api/reservas';
+import axios from '../api/axios';
 import { Link } from 'react-router-dom';
 import Header from '../componentes/Header.jsx';
 import { ESTADOS_RESERVA } from '../constants/estadosReserva';
+import { useAuth } from '../Context/authContext';
 
 export default function MisCotizaciones() {
+  const { user } = useAuth();
   const [reservas, setReservas] = useState([]);
   const [filteredReservas, setFilteredReservas] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,16 +15,21 @@ export default function MisCotizaciones() {
   const [activeTab, setActiveTab] = useState('todas');
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
 
+  // Verificar si el usuario es administrador
+  const isAdmin = user?.roles?.some(role => role.nombre === 'admin' || role === 'admin') || false;
+
   const [filtros, setFiltros] = useState({
     busqueda: '',
     fechaInicio: '',
     fechaFin: '',
     tiposSeleccionados: [],
-    marcasSeleccionadas: []
+    marcasSeleccionadas: [],
+    comunasSeleccionadas: []
   });
 
   const [tiposDisponibles, setTiposDisponibles] = useState([]);
   const [marcasDisponibles, setMarcasDisponibles] = useState([]);
+  const [comunasDisponibles, setComunasDisponibles] = useState([]);
 
   useEffect(() => {
     cargarReservas();
@@ -43,8 +51,40 @@ export default function MisCotizaciones() {
       
       const tipos = new Set();
       const marcas = new Set();
+      const comunas = new Set();
       
       reservasData.forEach(reserva => {
+        // Extraer comuna de la dirección del usuario (empresaId poblado)
+        const direccion = reserva.empresaId?.direccion || '';
+        if (direccion) {
+          // Formato esperado: "calle número, comuna"
+          const partes = direccion.split(',');
+          if (partes.length >= 2) {
+            // Tomar la última parte después de la coma (la comuna)
+            const comuna = partes[partes.length - 1].trim();
+            if (comuna) {
+              // Capitalizar primera letra de cada palabra
+              const comunaFormateada = comuna
+                .toLowerCase()
+                .split(' ')
+                .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1))
+                .join(' ');
+              comunas.add(comunaFormateada);
+            }
+          } else {
+            // Si no hay coma, podría ser solo la comuna
+            const comuna = direccion.trim();
+            if (comuna) {
+              const comunaFormateada = comuna
+                .toLowerCase()
+                .split(' ')
+                .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1))
+                .join(' ');
+              comunas.add(comunaFormateada);
+            }
+          }
+        }
+        
         reserva.items?.forEach(item => {
           const nombreProducto = item.nombre || item.producto?.nombre || '';
           if (nombreProducto) {
@@ -67,6 +107,7 @@ export default function MisCotizaciones() {
       
       setTiposDisponibles(Array.from(tipos).sort());
       setMarcasDisponibles(Array.from(marcas).sort());
+      setComunasDisponibles(Array.from(comunas).sort());
       
     } catch (err) {
       console.error('Error al cargar reservas:', err);
@@ -81,13 +122,12 @@ export default function MisCotizaciones() {
 
     if (activeTab === 'enCurso') {
       resultado = resultado.filter(r => 
-        r.estado === ESTADOS_RESERVA.PENDIENTE || 
         r.estado === ESTADOS_RESERVA.CONFIRMADA
       );
     } else if (activeTab === 'historico') {
       resultado = resultado.filter(r => 
-        r.estado === ESTADOS_RESERVA.EXPIRADA || 
-        r.estado === ESTADOS_RESERVA.CANCELADA
+        r.estado === ESTADOS_RESERVA.CANCELADA || 
+        r.estado === ESTADOS_RESERVA.DEVUELTA
       );
     }
 
@@ -135,6 +175,31 @@ export default function MisCotizaciones() {
       );
     }
 
+    if (filtros.comunasSeleccionadas.length > 0) {
+      resultado = resultado.filter(r => {
+        const direccion = r.empresaId?.direccion || '';
+        if (!direccion) return false;
+        
+        // Extraer comuna de la dirección
+        const partes = direccion.split(',');
+        let comuna = '';
+        if (partes.length >= 2) {
+          comuna = partes[partes.length - 1].trim();
+        } else {
+          comuna = direccion.trim();
+        }
+        
+        // Capitalizar para comparar
+        const comunaFormateada = comuna
+          .toLowerCase()
+          .split(' ')
+          .map(palabra => palabra.charAt(0).toUpperCase() + palabra.slice(1))
+          .join(' ');
+        
+        return filtros.comunasSeleccionadas.includes(comunaFormateada);
+      });
+    }
+
     setFilteredReservas(resultado);
   };
 
@@ -156,20 +221,31 @@ export default function MisCotizaciones() {
     }));
   };
 
+  const toggleComuna = (comuna) => {
+    setFiltros(prev => ({
+      ...prev,
+      comunasSeleccionadas: prev.comunasSeleccionadas.includes(comuna)
+        ? prev.comunasSeleccionadas.filter(c => c !== comuna)
+        : [...prev.comunasSeleccionadas, comuna]
+    }));
+  };
+
   const limpiarFiltros = () => {
     setFiltros({
       busqueda: '',
       fechaInicio: '',
       fechaFin: '',
       tiposSeleccionados: [],
-      marcasSeleccionadas: []
+      marcasSeleccionadas: [],
+      comunasSeleccionadas: []
     });
   };
 
   const hayFiltrosActivos = () => {
     return filtros.busqueda || filtros.fechaInicio || filtros.fechaFin || 
            filtros.tiposSeleccionados.length > 0 || 
-           filtros.marcasSeleccionadas.length > 0;
+           filtros.marcasSeleccionadas.length > 0 ||
+           filtros.comunasSeleccionadas.length > 0;
   };
 
   const contadorFiltros = () => {
@@ -178,38 +254,71 @@ export default function MisCotizaciones() {
     if (filtros.fechaInicio || filtros.fechaFin) count++;
     count += filtros.tiposSeleccionados.length;
     count += filtros.marcasSeleccionadas.length;
+    count += filtros.comunasSeleccionadas.length;
     return count;
   };
 
-  const enCurso = filteredReservas.filter(r => 
-    r.estado === ESTADOS_RESERVA.PENDIENTE || r.estado === ESTADOS_RESERVA.CONFIRMADA
+  // Calcular contadores desde todas las reservas (sin filtrar por tab)
+  const enCurso = reservas.filter(r => 
+    r.estado === ESTADOS_RESERVA.CONFIRMADA
   ).length;
   
-  const historico = filteredReservas.filter(r => 
-    r.estado === ESTADOS_RESERVA.EXPIRADA || r.estado === ESTADOS_RESERVA.CANCELADA
+  const historico = reservas.filter(r => 
+    r.estado === ESTADOS_RESERVA.CANCELADA || 
+    r.estado === ESTADOS_RESERVA.DEVUELTA
   ).length;
 
   const getBadgeEstado = (estado) => {
     const badges = {
-      [ESTADOS_RESERVA.PENDIENTE]: 'bg-yellow-100 text-yellow-800 border border-yellow-300',
       [ESTADOS_RESERVA.CONFIRMADA]: 'bg-green-100 text-green-800 border border-green-300',
-      [ESTADOS_RESERVA.EXPIRADA]: 'bg-gray-100 text-gray-800 border border-gray-300',
-      [ESTADOS_RESERVA.CANCELADA]: 'bg-red-100 text-red-800 border border-red-300'
+      [ESTADOS_RESERVA.CANCELADA]: 'bg-red-100 text-red-800 border border-red-300',
+      [ESTADOS_RESERVA.DEVUELTA]: 'bg-blue-100 text-blue-800 border border-blue-300'
     };
     
     const iconos = {
-      [ESTADOS_RESERVA.PENDIENTE]: '⏳',
       [ESTADOS_RESERVA.CONFIRMADA]: '✓',
-      [ESTADOS_RESERVA.EXPIRADA]: '⌛',
-      [ESTADOS_RESERVA.CANCELADA]: '✕'
+      [ESTADOS_RESERVA.CANCELADA]: '✕',
+      [ESTADOS_RESERVA.DEVUELTA]: '✓'
+    };
+    
+    const etiquetas = {
+      [ESTADOS_RESERVA.CONFIRMADA]: 'Confirmada',
+      [ESTADOS_RESERVA.CANCELADA]: 'Cancelada',
+      [ESTADOS_RESERVA.DEVUELTA]: 'Completada'
     };
     
     return (
       <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${badges[estado] || 'bg-gray-100 text-gray-800'}`}>
         <span>{iconos[estado]}</span>
-        {estado}
+        {etiquetas[estado] || estado}
       </span>
     );
+  };
+
+  const handleDevolverEquipos = async (reservaId) => {
+    if (!window.confirm('¿Está seguro de marcar estos equipos como devueltos? El stock será restaurado automáticamente.')) {
+      return;
+    }
+
+    try {
+      const response = await axios.post(`/reservas/${reservaId}/devolver`);
+      console.log('✅ Equipos devueltos correctamente:', response.data);
+      
+      // Recargar las reservas
+      try {
+        await cargarReservas();
+      } catch (reloadErr) {
+        console.warn('⚠️ Error al recargar, pero la devolución fue exitosa:', reloadErr);
+        // Forzar recarga manual de la página si falla cargarReservas
+        window.location.reload();
+      }
+      
+      alert('✅ Equipos devueltos exitosamente. El stock ha sido restaurado.');
+    } catch (err) {
+      console.error('❌ Error al devolver equipos:', err);
+      console.error('Detalles:', err.response?.data);
+      alert('❌ Error al devolver equipos: ' + (err.response?.data?.message || err.message));
+    }
   };
 
   if (loading) {
@@ -366,7 +475,7 @@ export default function MisCotizaciones() {
                 </div>
               </div>
 
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+              <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
                 <div>
                   <label className='block text-sm font-bold text-gray-700 mb-3 flex items-center gap-2'>
                     <svg className='w-5 h-5 text-blue-600' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
@@ -434,6 +543,45 @@ export default function MisCotizaciones() {
                           </span>
                           {filtros.marcasSeleccionadas.includes(marca) && (
                             <svg className='w-4 h-4 text-green-600' fill='currentColor' viewBox='0 0 20 20'>
+                              <path fillRule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clipRule='evenodd' />
+                            </svg>
+                          )}
+                        </label>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <label className='block text-sm font-bold text-gray-700 mb-3 flex items-center gap-2'>
+                    <svg className='w-5 h-5 text-blue-600' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
+                      <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z' />
+                      <path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 11a3 3 0 11-6 0 3 3 0 016 0z' />
+                    </svg>
+                    Comuna
+                    {filtros.comunasSeleccionadas.length > 0 && (
+                      <span className='bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-xs font-bold'>
+                        {filtros.comunasSeleccionadas.length}
+                      </span>
+                    )}
+                  </label>
+                  <div className='space-y-2 bg-gray-50 p-4 rounded-xl border border-gray-200'>
+                    {comunasDisponibles.length === 0 ? (
+                      <p className='text-sm text-gray-500 italic'>No hay comunas disponibles</p>
+                    ) : (
+                      comunasDisponibles.map(comuna => (
+                        <label key={comuna} className='flex items-center gap-3 p-3 hover:bg-white rounded-lg cursor-pointer transition-colors group'>
+                          <input
+                            type='checkbox'
+                            checked={filtros.comunasSeleccionadas.includes(comuna)}
+                            onChange={() => toggleComuna(comuna)}
+                            className='w-5 h-5 text-purple-600 border-gray-300 rounded focus:ring-purple-500 focus:ring-2 cursor-pointer'
+                          />
+                          <span className='text-sm font-medium text-gray-700 group-hover:text-purple-700 flex-1'>
+                            {comuna}
+                          </span>
+                          {filtros.comunasSeleccionadas.includes(comuna) && (
+                            <svg className='w-4 h-4 text-purple-600' fill='currentColor' viewBox='0 0 20 20'>
                               <path fillRule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clipRule='evenodd' />
                             </svg>
                           )}
@@ -605,13 +753,25 @@ export default function MisCotizaciones() {
                         </span>
                       </td>
                       <td className='px-6 py-4 text-center'>
-                        <Link
-                          to={`/mis-cotizaciones/${reserva._id}`}
-                          className='inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:shadow-lg transition-all text-sm font-medium'
-                        >
-                          Ver detalle
-                          <span>→</span>
-                        </Link>
+                        <div className='flex items-center justify-center gap-2'>
+                          <Link
+                            to={`/mis-cotizaciones/${reserva._id}`}
+                            className='inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:shadow-lg transition-all text-sm font-medium'
+                          >
+                            Ver detalle
+                            <span>→</span>
+                          </Link>
+                          {isAdmin && reserva.estado === ESTADOS_RESERVA.CONFIRMADA && (
+                            <button
+                              onClick={() => handleDevolverEquipos(reserva._id)}
+                              className='inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:shadow-lg transition-all text-sm font-medium'
+                              title='Marcar equipos como devueltos (Solo admin)'
+                            >
+                              <span>↩️</span>
+                              Devolver
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -691,14 +851,25 @@ export default function MisCotizaciones() {
                         </div>
                       </div>
 
-                      {/* Botón Ver Detalle */}
-                      <Link
-                        to={`/mis-cotizaciones/${reserva._id}`}
-                        className='w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:shadow-lg transition-all text-sm font-bold mt-3'
-                      >
-                        Ver detalle completo
-                        <span>→</span>
-                      </Link>
+                      {/* Botones de Acción */}
+                      <div className='space-y-2 mt-3'>
+                        <Link
+                          to={`/mis-cotizaciones/${reserva._id}`}
+                          className='w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:shadow-lg transition-all text-sm font-bold'
+                        >
+                          Ver detalle completo
+                          <span>→</span>
+                        </Link>
+                        {isAdmin && reserva.estado === ESTADOS_RESERVA.CONFIRMADA && (
+                          <button
+                            onClick={() => handleDevolverEquipos(reserva._id)}
+                            className='w-full flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:shadow-lg transition-all text-sm font-bold'
+                          >
+                            <span>↩️</span>
+                            Marcar como Devuelto
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 ))}

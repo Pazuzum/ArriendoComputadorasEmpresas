@@ -6,13 +6,14 @@ import axios from '../api/axios.js';
 import { generarContratoPDF } from '../utils/contratoPdf.js';
 import { useAuth } from '../Context/authContext.jsx';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '../componentes/Toast.jsx';
 
 const CotizacionResumen = () => {
   const { items, clear, updateQty, removeItem } = useCotizacion();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { showToast, ToastContainer } = useToast();
   const [accepted, setAccepted] = useState(false);
-  const [message, setMessage] = useState('');
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
   const [success, setSuccess] = useState(false);
@@ -53,21 +54,20 @@ const CotizacionResumen = () => {
 
   const handleSubmit = () => {
     if (!accepted) {
-      setMessage('Debe aceptar los términos y condiciones para enviar la cotización.');
+      showToast('Debe aceptar los términos y condiciones para enviar la cotización.', 'warning');
       return;
     }
     if (!fechaInicio || !fechaFin) {
-      setMessage('Debe seleccionar las fechas de inicio y fin del arriendo.');
+      showToast('Debe seleccionar las fechas de inicio y fin del arriendo.', 'warning');
       return;
     }
     // Mostrar modal de firma en lugar de enviar directamente
-    setMessage('');
     setShowFirma(true);
   };
 
   const handleConfirmarConFirma = async () => {
     if (!firmaCliente) {
-      setMessage('Debe firmar el contrato antes de continuar.');
+      showToast('Debe firmar el contrato antes de continuar.', 'warning');
       return;
     }
 
@@ -78,7 +78,7 @@ const CotizacionResumen = () => {
           email: user?.email || 'N/A',
           telefono: user?.telefono || user?.telefonoContacto || 'N/A'
         },
-        items: items.map(i=> ({ productId: null, nombre: i.nombre, precio: i.precio, cantidad: i.qty })),
+        items: items.map(i=> ({ productId: i.id, nombre: i.nombre, precio: i.precio, cantidad: i.qty })),
         notas: `Arriendo desde ${fechaInicio} hasta ${fechaFin}`,
         duracion: { valor: diasTotales, unidad: 'dias' },
         total: totalFinal,
@@ -87,101 +87,117 @@ const CotizacionResumen = () => {
       
       const res = await axios.post('/reservas', payload);
       
+      showToast('✓ Cotización creada exitosamente. Redirigiendo al pago...', 'success');
+      
       // Redirigir a página de pago
-      navigate('/pago', { 
-        state: { 
-          reservaId: res.data.reserva._id, 
-          total: totalFinal,
-          fechaInicio,
-          fechaFin
-        } 
-      });
-      clear();
+      setTimeout(() => {
+        navigate('/pago', { 
+          state: { 
+            reservaId: res.data.reserva._id, 
+            total: totalFinal,
+            fechaInicio,
+            fechaFin
+          } 
+        });
+        clear();
+      }, 1500);
     } catch(e) {
       console.error(e);
-      setMessage('Error al enviar la cotización, Porfavor inicie su sesión.');
+      const errorMsg = e.response?.data?.message || 'Error al enviar la cotización. Por favor, inicie sesión e intente nuevamente.';
+      showToast(errorMsg, 'error');
       setShowFirma(false);
     }
   };
 
   const handleGenerarContrato = () => {
     try {
-      // Arrendador = usuario logueado (empresa del cliente)
-      const arrendador = {
+      // Arrendatario = usuario logueado (empresa cliente que arrienda los equipos)
+      const arrendatario = {
         razonSocial: user?.nombreEmpresa || user?.nombre || 'N/A',
         rut: user?.rutEmpresa || 'N/A',
         domicilio: user?.direccion || 'N/A',
         contacto: {
-          nombre: user?.nombre || user?.nombrePropietario || 'N/A',
+          nombre: user?.nombrePropietario || user?.nombre || 'N/A',
           email: user?.email || 'N/A',
-          telefono: user?.telefono || user?.telefonoContacto || 'N/A',
+          telefono: user?.telefonoContacto || user?.telefono || 'N/A',
         }
       };
-      // Arrendatario = Datos provisionales del desarrollador, solicitados por el usuario
-      const arrendatario = {
-        razonSocial: 'Desarrollador',
-        rut: '21080205-3',
-        domicilio: 'Hanga Roa 1249',
-        contacto: { nombre: 'Desarrollador', email: 'N/A', telefono: '954476887' }
+      // Arrendador = RENTPC (empresa que presta los equipos)
+      const arrendador = {
+        razonSocial: 'RENTPC - Arriendo de Equipos Computacionales',
+        rut: '21.080.205-3',
+        domicilio: 'Hanga Roa 1249, Valparaíso, Chile',
+        contacto: { 
+          nombre: 'Departamento de Ventas', 
+          email: 'contacto@rentpc.cl', 
+          telefono: '+56 9 5447 6887' 
+        }
       };
       const url = generarContratoPDF({ items, total: totalFinal, duracion: { valor: diasTotales, unidad: 'dias' }, arrendador, arrendatario });
       setPdfUrl(url);
       setShowContrato(true);
-      setMessage('');
+      showToast('✓ Contrato generado exitosamente', 'success');
     } catch (e) {
       console.error(e);
-      setMessage('No se pudo generar el contrato en PDF.');
+      showToast('No se pudo generar el contrato en PDF. Por favor, intente nuevamente.', 'error');
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <ToastContainer />
       <Header />
       <main className="max-w-7xl mx-auto p-6 py-8">
-        <div className="mb-6">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Resumen de Cotización</h1>
-          <p className="text-gray-600">Revisa tu selección y procede al pago</p>
-        </div>
-
-        {message && (
-          <div className={`mb-6 rounded-xl px-6 py-4 shadow-sm ${success ? 'bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200' : 'bg-gradient-to-r from-red-50 to-rose-50 border border-red-200'}`}>
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                {success ? (
-                  <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                ) : (
-                  <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                )}
-                <span className={`font-medium ${success ? 'text-green-800' : 'text-red-800'}`}>{message}</span>
-              </div>
-              {success && (
-                <button onClick={() => navigate('/mis-cotizaciones')} className="shrink-0 rounded-lg bg-green-600 text-white px-4 py-2 text-sm font-semibold hover:bg-green-700 transition">Ver estado ahora</button>
-              )}
-            </div>
-          </div>
-        )}
-
-        {items.length === 0 ? (
-          <div className="bg-white rounded-2xl p-12 shadow-lg text-center">
-            <div className="inline-flex items-center justify-center w-20 h-20 bg-gray-100 rounded-full mb-4">
-              <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        {/* Encabezado mejorado */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="p-3 bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl shadow-lg">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No hay equipos en la cotización</h3>
-            <p className="text-gray-600 mb-6">Agrega equipos desde el catálogo para comenzar</p>
-            <button onClick={() => navigate('/catalogo')} className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition">Ir al catálogo</button>
+            <div>
+              <h1 className="text-4xl font-extrabold text-gray-900">Resumen de Cotización</h1>
+              <p className="text-gray-600 text-lg mt-1">Revisa los detalles y procede con el pago seguro</p>
+            </div>
+          </div>
+        </div>
+
+        {items.length === 0 ? (
+          <div className="bg-white rounded-3xl p-16 shadow-2xl text-center border-2 border-gray-100">
+            <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl mb-6 shadow-lg">
+              <svg className="w-14 h-14 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-3">No hay equipos seleccionados</h3>
+            <p className="text-gray-600 text-lg mb-8 max-w-md mx-auto">Comienza agregando equipos desde nuestro catálogo para crear tu cotización</p>
+            <button 
+              onClick={() => navigate('/catalogo')} 
+              className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-4 rounded-xl font-bold text-lg hover:from-blue-700 hover:to-blue-800 transition shadow-xl hover:shadow-2xl active:scale-95"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+              </svg>
+              Explorar catálogo
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Tabla de productos */}
-            <div className="lg:col-span-2 bg-white rounded-xl sm:rounded-2xl shadow-lg overflow-hidden">
-              <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 sm:px-6 py-3 sm:py-4">
-                <h2 className="text-lg sm:text-xl font-bold text-white">🛒 Equipos seleccionados</h2>
+            <div className="lg:col-span-2 bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-gray-100">
+              <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 px-6 py-5">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-white">Equipos Seleccionados</h2>
+                    <p className="text-blue-100 text-sm">{items.length} producto{items.length !== 1 ? 's' : ''} en tu cotización</p>
+                  </div>
+                </div>
               </div>
               <div className="p-4 sm:p-6">
                 {/* Vista Desktop - Tabla */}
@@ -274,21 +290,37 @@ const CotizacionResumen = () => {
             </div>
 
             {/* Panel lateral de detalles */}
-            <aside className="lg:col-span-1 space-y-4 sm:space-y-6">
+            <aside className="lg:col-span-1 space-y-6">
               {/* Card de resumen */}
-              <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg overflow-hidden">
-                <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 sm:px-6 py-3 sm:py-4">
-                  <h2 className="text-lg sm:text-xl font-bold text-white">📊 Resumen</h2>
+              <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border-2 border-gray-100">
+                <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 px-6 py-5">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <h2 className="text-xl font-bold text-white">Resumen</h2>
+                  </div>
                 </div>
-                <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
-                  <div className="flex justify-between items-center pb-4 border-b border-gray-200">
-                    <span className="text-gray-600 font-medium">Subtotal equipos</span>
-                    <span className="text-xl font-bold text-gray-900">${totalCalculado}</span>
+                <div className="p-6 space-y-5">
+                  <div className="flex justify-between items-center pb-5 border-b-2 border-gray-200">
+                    <div>
+                      <span className="text-gray-600 font-semibold text-sm block mb-1">Subtotal equipos</span>
+                      <span className="text-xs text-gray-500">Precio base por día</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-2xl font-extrabold text-gray-900">${totalCalculado.toLocaleString('es-CL')}</span>
+                      <span className="text-xs text-gray-500 block mt-1">/día</span>
+                    </div>
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      📅 Periodo de arriendo
+                    <label className="block text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
+                      <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      Periodo de arriendo
                     </label>
                     <div className="space-y-3">
                       <div>
@@ -316,26 +348,37 @@ const CotizacionResumen = () => {
                       </div>
                     </div>
                     {fechaInicio && fechaFin && (
-                      <div className="mt-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                        <div className="flex items-center gap-2 text-blue-800">
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          <span className="text-sm font-semibold">
-                            {diasTotales} día{diasTotales !== 1 ? 's' : ''} de arriendo
-                          </span>
+                      <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border-2 border-blue-200 shadow-inner">
+                        <div className="flex items-center gap-3 text-blue-900">
+                          <div className="p-2 bg-blue-200 rounded-lg">
+                            <svg className="w-5 h-5 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold">
+                              {diasTotales} día{diasTotales !== 1 ? 's' : ''} de arriendo
+                            </p>
+                            <p className="text-xs text-blue-700">
+                              {new Date(fechaInicio).toLocaleDateString('es-CL')} - {new Date(fechaFin).toLocaleDateString('es-CL')}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     )}
                   </div>
 
-                  <div className="pt-4 border-t-2 border-gray-300 bg-gradient-to-r from-blue-50 to-blue-100 -mx-6 px-6 py-4 rounded-lg">
-                    <div className="flex justify-between items-center">
+                  <div className="pt-5 border-t-2 border-gray-300 bg-gradient-to-br from-blue-600 to-indigo-700 -mx-6 px-6 py-6 rounded-b-2xl shadow-lg">
+                    <div className="flex justify-between items-center mb-2">
                       <div>
-                        <p className="text-sm text-gray-600 mb-1">Total a pagar</p>
-                        <p className="text-xs text-gray-500">${totalCalculado} × {diasTotales} día{diasTotales !== 1 ? 's' : ''}</p>
+                        <p className="text-sm text-blue-100 font-semibold mb-1">Total a pagar</p>
+                        <p className="text-xs text-blue-200">${totalCalculado.toLocaleString('es-CL')} × {diasTotales} día{diasTotales !== 1 ? 's' : ''}</p>
                       </div>
-                      <span className="text-3xl font-extrabold text-blue-600">${totalFinal}</span>
+                      <div className="text-right">
+                        <div className="bg-white/20 backdrop-blur-sm rounded-xl px-4 py-2">
+                          <span className="text-4xl font-black text-white drop-shadow-lg">${totalFinal.toLocaleString('es-CL')}</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -343,27 +386,51 @@ const CotizacionResumen = () => {
               </div>
 
               {/* Card de acciones */}
-              <div className="bg-white rounded-2xl shadow-lg p-6 space-y-4">
-                <button onClick={handleGenerarContrato} className="w-full bg-gradient-to-r from-gray-800 to-gray-900 text-white px-6 py-3.5 rounded-xl font-semibold hover:from-gray-900 hover:to-black transition shadow-md hover:shadow-lg flex items-center justify-center gap-2">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
-                  Generar y ver contrato PDF
+              <div className="bg-white rounded-2xl shadow-2xl p-6 space-y-4 border-2 border-gray-100">
+                <button 
+                  onClick={handleGenerarContrato} 
+                  className="w-full bg-gradient-to-r from-gray-800 via-gray-900 to-black text-white px-6 py-4 rounded-xl font-bold text-base hover:from-gray-900 hover:via-black hover:to-gray-900 transition-all shadow-xl hover:shadow-2xl active:scale-95 flex items-center justify-center gap-3 group"
+                >
+                  <div className="p-2 bg-white/10 rounded-lg group-hover:bg-white/20 transition">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                  <span>Ver Contrato PDF</span>
                 </button>
                 
-                <label className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl hover:border-blue-500 cursor-pointer transition bg-gray-50">
-                  <input type="checkbox" checked={accepted} onChange={(e)=> setAccepted(e.target.checked)} className="w-5 h-5 text-blue-600 border-2 border-gray-300 rounded focus:ring-2 focus:ring-blue-500" />
-                  <span className="text-sm font-medium text-gray-700">Acepto los términos y condiciones</span>
+                <label className="flex items-center gap-3 p-5 border-2 border-gray-200 rounded-xl hover:border-blue-500 hover:bg-blue-50 cursor-pointer transition-all group bg-gradient-to-r from-gray-50 to-gray-100">
+                  <input 
+                    type="checkbox" 
+                    checked={accepted} 
+                    onChange={(e)=> setAccepted(e.target.checked)} 
+                    className="w-6 h-6 text-blue-600 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 cursor-pointer" 
+                  />
+                  <span className="text-sm font-bold text-gray-800 group-hover:text-blue-800 transition">Acepto los términos y condiciones del contrato</span>
                 </label>
                 
-                <button onClick={handleSubmit} className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3.5 rounded-xl font-bold hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-md hover:shadow-lg flex items-center justify-center gap-2" disabled={!accepted}>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                <button 
+                  onClick={handleSubmit} 
+                  className="w-full bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 text-white px-6 py-4 rounded-xl font-black text-base hover:from-blue-700 hover:via-blue-800 hover:to-indigo-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-xl hover:shadow-2xl active:scale-95 flex items-center justify-center gap-3 group" 
+                  disabled={!accepted}
+                >
+                  <div className="p-2 bg-white/20 rounded-lg group-hover:bg-white/30 transition">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    </svg>
+                  </div>
+                  <span>Firmar y Proceder al Pago</span>
+                  <svg className="w-5 h-5 group-hover:translate-x-1 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
-                  Confirmar e ir a pagar
                 </button>
                 
-                <button onClick={clear} className="w-full border-2 border-gray-300 px-6 py-3 rounded-xl font-semibold hover:bg-gray-50 transition text-gray-700">Vaciar cotización</button>
+                <button 
+                  onClick={clear} 
+                  className="w-full border-2 border-gray-300 px-6 py-3.5 rounded-xl font-bold hover:bg-red-50 hover:border-red-300 hover:text-red-700 transition-all text-gray-700 active:scale-95"
+                >
+                  Vaciar cotización
+                </button>
               </div>
             </aside>
           </div>

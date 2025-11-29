@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Header from '../componentes/Header.jsx';
-import { useCarrito } from '../Context/CarritoContext.jsx';
 
 
 const CotizarForm = () => {
@@ -14,15 +13,6 @@ const CotizarForm = () => {
         comments: '',
     });
     const [successMessage, setSuccessMessage] = useState(false);
-    const { items, clear } = useCarrito();
-
-    useEffect(() => {
-        // Prefill products field with cart items
-        if (items.length > 0) {
-            const list = items.map(it => `${it.nombre} x${it.qty}`).join('\n');
-            setFormData(prev => ({ ...prev, products: list }));
-        }
-    }, [items]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -34,8 +24,6 @@ const CotizarForm = () => {
 
         setSuccessMessage(true);
         console.log('Formulario de cotización enviado:', formData);
-        // Clear cart after sending
-        clear();
         
         setFormData({
             'company-name': '',

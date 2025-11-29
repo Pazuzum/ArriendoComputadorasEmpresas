@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Header from '../componentes/Header.jsx';
+import { useToast } from '../componentes/Toast.jsx';
 import { getPendingUsers, getAllUsers, activateUser, deactivateUser } from '../api/auth';
 import { getProductos, createProducto, updateProducto, deleteProducto } from '../api/productos';
 
 const AdminPanel = () => {
+  const { showToast, ToastContainer } = useToast();
   const [pending, setPending] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState('');
   const [query, setQuery] = useState('');
+
   const [activePanel, setActivePanel] = useState(null); // null | 'cuentas' | 'equipos'
   const [cuentasTab, setCuentasTab] = useState('pendientes'); // 'pendientes' | 'todos'
   // Equipos state
@@ -16,14 +19,17 @@ const AdminPanel = () => {
   const [prodLoading, setProdLoading] = useState(false);
   const [pForm, setPForm] = useState({ nombre: '', descripcion: '', precio: '', disponibilidad: 0, img: '' });
   const [editingId, setEditingId] = useState(null);
+  // Modal de información de usuario
+  const [showInfoModal, setShowInfoModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const fetchPending = async () => {
     try {
       setLoading(true);
       const res = await getPendingUsers();
       setPending(res.data.usuarios || res.data || []);
-    } catch {
-      setMessage('Error obteniendo cuentas pendientes');
+    } catch (error) {
+      showToast(error.response?.data?.message || 'Error al cargar cuentas pendientes. Por favor, intenta nuevamente.', 'error');
     } finally { setLoading(false); }
   };
 
@@ -32,8 +38,8 @@ const AdminPanel = () => {
       setLoading(true);
       const res = await getAllUsers();
       setAllUsers(res.data.usuarios || res.data || []);
-    } catch {
-      setMessage('Error obteniendo usuarios');
+    } catch (error) {
+      showToast(error.response?.data?.message || 'Error al cargar usuarios. Por favor, intenta nuevamente.', 'error');
     } finally { setLoading(false); }
   };
 
@@ -53,27 +59,51 @@ const AdminPanel = () => {
       setProdLoading(true);
       const res = await getProductos();
       setProductos(res.data.productos || []);
-    } catch {
-      setMessage('Error al obtener productos');
+    } catch (error) {
+      showToast(error.response?.data?.message || 'Error al cargar equipos. Por favor, intenta nuevamente.', 'error');
     } finally { setProdLoading(false); }
   };
 
   const handleSubmitProducto = async (e) => {
     e.preventDefault();
+    
+    // Validaciones adicionales
+    if (!pForm.nombre || pForm.nombre.trim().length < 3) {
+      showToast('El nombre del equipo debe tener al menos 3 caracteres', 'error');
+      return;
+    }
+    if (Number(pForm.precio) <= 0) {
+      showToast('El precio debe ser mayor a 0', 'error');
+      return;
+    }
+    if (Number(pForm.disponibilidad) < 0) {
+      showToast('La disponibilidad no puede ser negativa', 'error');
+      return;
+    }
+    
     try {
-      const payload = { nombre: pForm.nombre, descripcion: pForm.descripcion, precio: Number(pForm.precio), disponibilidad: Number(pForm.disponibilidad), imgs: pForm.img ? [pForm.img] : [] };
+      const payload = { 
+        nombre: pForm.nombre.trim(), 
+        descripcion: pForm.descripcion.trim(), 
+        precio: Number(pForm.precio), 
+        disponibilidad: Number(pForm.disponibilidad), 
+        imgs: pForm.img ? [pForm.img] : [] 
+      };
+      
       if (editingId) {
         await updateProducto(editingId, payload);
-        setMessage('Producto actualizado');
+        showToast('✓ Equipo actualizado exitosamente', 'success');
       } else {
         await createProducto(payload);
-        setMessage('Producto creado');
+        showToast('✓ Equipo creado exitosamente', 'success');
       }
+      
       setPForm({ nombre: '', descripcion: '', precio: '', disponibilidad: 0, img: '' });
       setEditingId(null);
       fetchProductos();
-    } catch {
-      setMessage('Error al guardar producto');
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || 'Error al guardar el equipo. Por favor, verifica los datos e intenta nuevamente.';
+      showToast(errorMsg, 'error');
     }
   };
   const handleEditProducto = (p) => {
@@ -88,40 +118,50 @@ const AdminPanel = () => {
   };
 
   const handleDeleteProducto = async (id) => {
-    if (!window.confirm('¿Eliminar este equipo?')) return;
+    if (!window.confirm('¿Estás seguro de eliminar este equipo? Esta acción no se puede deshacer.')) return;
     try {
       await deleteProducto(id);
-      setMessage('Producto eliminado');
+      showToast('✓ Equipo eliminado exitosamente', 'success');
       fetchProductos();
-    } catch {
-      setMessage('Error al eliminar producto');
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || 'No se pudo eliminar el equipo. Puede tener reservas asociadas.';
+      showToast(errorMsg, 'error');
     }
   };
 
   const handleActivate = async (id) => {
     try {
       await activateUser(id);
-      setMessage('Cuenta activada');
+      showToast('✓ Cuenta activada exitosamente', 'success');
       fetchPending();
       fetchAll();
-    } catch {
-      setMessage('Error al activar cuenta');
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || 'Error al activar la cuenta. Por favor, intenta nuevamente.';
+      showToast(errorMsg, 'error');
     }
   };
 
   const handleDeactivate = async (id) => {
+    if (!window.confirm('¿Estás seguro de desactivar esta cuenta? El usuario no podrá acceder al sistema.')) return;
     try {
       await deactivateUser(id);
-      setMessage('Cuenta desactivada');
+      showToast('✓ Cuenta desactivada exitosamente', 'success');
       fetchPending();
       fetchAll();
-    } catch {
-      setMessage('Error al desactivar cuenta');
+    } catch (error) {
+      const errorMsg = error.response?.data?.message || 'Error al desactivar la cuenta. Por favor, intenta nuevamente.';
+      showToast(errorMsg, 'error');
     }
+  };
+
+  const handleShowInfo = (user) => {
+    setSelectedUser(user);
+    setShowInfoModal(true);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      <ToastContainer />
       <Header />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {/* Header con ícono */}
@@ -138,20 +178,33 @@ const AdminPanel = () => {
               <p className="text-sm sm:text-base text-gray-600 mt-0.5 sm:mt-1">Gestiona usuarios y equipos del sistema</p>
             </div>
           </div>
-          {message && (
-            <div className="mt-4 bg-green-50 border-l-4 border-green-500 p-4 rounded-lg shadow-sm">
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <p className="text-sm text-green-700 font-medium">{message}</p>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Opciones principales mejoradas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="group bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <div className="flex items-start justify-between mb-4">
+              <div className="bg-purple-100 p-3 rounded-xl group-hover:bg-purple-600 transition-colors duration-300">
+                <svg className="w-7 h-7 text-purple-600 group-hover:text-white transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+              </div>
+              <span className="inline-flex items-center rounded-full bg-purple-50 px-3 py-1 text-xs font-semibold text-purple-700">
+                Cotizaciones
+              </span>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Gestionar Cotizaciones</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Ve todas las reservas, cambia estados y gestiona devoluciones
+            </p>
+            <Link 
+              to="/admin/cotizaciones"
+              className="w-full bg-gradient-to-r from-purple-600 to-purple-700 text-white px-5 py-2.5 rounded-xl font-semibold hover:from-purple-700 hover:to-purple-800 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5 block text-center"
+            >
+              Abrir panel
+            </Link>
+          </div>
+
           <div className="group bg-white rounded-2xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
             <div className="flex items-start justify-between mb-4">
               <div className="bg-blue-100 p-3 rounded-xl group-hover:bg-blue-600 transition-colors duration-300">
@@ -385,8 +438,22 @@ const AdminPanel = () => {
                           <tr className="text-gray-700 font-semibold">
                             <th className="px-5 py-4">Nombre</th>
                             <th className="px-5 py-4">Email</th>
-                            <th className="px-5 py-4">Empresa</th>
-                            <th className="px-5 py-4 text-center">Estado</th>
+                            <th className="px-5 py-4">
+                              <div className="flex items-center gap-2">
+                                Empresa
+                                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                              </div>
+                            </th>
+                            <th className="px-5 py-4 text-center">
+                              <div className="flex items-center justify-center gap-2">
+                                Estado
+                                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                              </div>
+                            </th>
                             <th className="px-5 py-4 text-center">Acción</th>
                           </tr>
                         </thead>
@@ -398,11 +465,37 @@ const AdminPanel = () => {
                             <tr key={u._id} className="hover:bg-blue-50/50 transition-colors">
                               <td className="px-5 py-4 font-semibold text-gray-900">{u.nombre}</td>
                               <td className="px-5 py-4 text-gray-700">{u.email}</td>
-                              <td className="px-5 py-4 text-gray-700">{u.nombreEmpresa || '-'}</td>
+                              <td className="px-5 py-4">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-gray-700">{u.nombreEmpresa || '-'}</span>
+                                  {u.nombreEmpresa && u.nombreEmpresa !== '-' && (
+                                    <button
+                                      onClick={() => handleShowInfo(u)}
+                                      className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-1.5 rounded-lg transition-all"
+                                      title="Ver información completa"
+                                    >
+                                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                      </svg>
+                                    </button>
+                                  )}
+                                </div>
+                              </td>
                               <td className="px-5 py-4 text-center">
-                                <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold ${u.estado==='Activo' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                                  {u.estado}
-                                </span>
+                                <div className="flex items-center justify-center gap-2">
+                                  <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold ${u.estado==='Activo' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                                    {u.estado}
+                                  </span>
+                                  <button
+                                    onClick={() => handleShowInfo(u)}
+                                    className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-1.5 rounded-lg transition-all"
+                                    title="Ver información completa"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                  </button>
+                                </div>
                               </td>
                               <td className="px-5 py-4 text-center">
                                 {u.estado !== 'Inactivo' ? (
@@ -430,11 +523,24 @@ const AdminPanel = () => {
                       return (u.nombre || '').toLowerCase().includes(query.toLowerCase()) || (u.email || '').toLowerCase().includes(query.toLowerCase());
                     }).map(u => (
                       <div key={u._id} className="bg-white border-2 border-gray-200 rounded-xl shadow-md overflow-hidden">
-                        <div className="bg-gradient-to-r from-gray-50 to-blue-50 px-4 py-3 border-b-2 border-gray-200 flex items-center justify-between">
+                        <div className="bg-gradient-to-r from-gray-50 to-blue-50 px-4 py-3 border-b-2 border-gray-200 flex items-center justify-between gap-2">
                           <h3 className="font-bold text-gray-900 text-sm flex-1">{u.nombre}</h3>
-                          <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${u.estado==='Activo' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
-                            {u.estado}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${u.estado==='Activo' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                              {u.estado}
+                            </span>
+                            {u.nombreEmpresa && u.nombreEmpresa !== '-' && (
+                              <button
+                                onClick={() => handleShowInfo(u)}
+                                className="text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg transition-all"
+                                title="Ver información"
+                              >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                              </button>
+                            )}
+                          </div>
                         </div>
                         <div className="p-4 space-y-3">
                           <div className="space-y-2">
@@ -522,20 +628,26 @@ const AdminPanel = () => {
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">Precio diario ($)</label>
                         <input 
+                          type="number"
+                          min="0"
+                          step="1"
                           className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 transition" 
                           placeholder="15000" 
                           value={pForm.precio} 
-                          onChange={e=> setPForm({...pForm, precio: e.target.value})} 
+                          onChange={e=> setPForm({...pForm, precio: Math.max(0, e.target.value)})} 
                           required 
                         />
                       </div>
                       <div>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">Disponibilidad (unidades)</label>
                         <input 
+                          type="number"
+                          min="0"
+                          step="1"
                           className="w-full px-4 py-2.5 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200 transition" 
                           placeholder="10" 
                           value={pForm.disponibilidad} 
-                          onChange={e=> setPForm({...pForm, disponibilidad: e.target.value})} 
+                          onChange={e=> setPForm({...pForm, disponibilidad: Math.max(0, e.target.value)})} 
                           required 
                         />
                       </div>
@@ -719,6 +831,114 @@ const AdminPanel = () => {
               </div>
             </div>
           </section>
+        )}
+
+        {/* Modal de Información de Usuario */}
+        {showInfoModal && selectedUser && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              {/* Header del Modal */}
+              <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-5 rounded-t-2xl sticky top-0 z-10">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-white/20 p-2.5 rounded-lg">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                    </div>
+                    <h2 className="text-xl font-bold text-white">Información de Empresa</h2>
+                  </div>
+                  <button 
+                    onClick={() => setShowInfoModal(false)} 
+                    className="bg-white/20 hover:bg-white/30 text-white p-2 rounded-lg transition-all"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Contenido del Modal */}
+              <div className="p-6 space-y-6">
+                {/* Información del Usuario */}
+                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-5 border-2 border-blue-100">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="bg-blue-600 p-2 rounded-lg">
+                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900">Datos del Usuario</h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-white rounded-lg p-4 shadow-sm">
+                      <p className="text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Nombre Completo</p>
+                      <p className="text-base font-bold text-gray-900">{selectedUser.nombre || '-'}</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 shadow-sm">
+                      <p className="text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Email</p>
+                      <p className="text-base font-semibold text-gray-900 break-all">{selectedUser.email || '-'}</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 shadow-sm">
+                      <p className="text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Teléfono</p>
+                      <p className="text-base font-bold text-gray-900">{selectedUser.telefono || '-'}</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 shadow-sm">
+                      <p className="text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Estado</p>
+                      <span className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold ${selectedUser.estado==='Activo' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                        {selectedUser.estado || '-'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Información de la Empresa */}
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-5 border-2 border-purple-100">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="bg-purple-600 p-2 rounded-lg">
+                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900">Información Empresarial</h3>
+                  </div>
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="bg-white rounded-lg p-4 shadow-sm">
+                      <p className="text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Nombre de Empresa</p>
+                      <p className="text-base font-bold text-gray-900">{selectedUser.nombreEmpresa || '-'}</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 shadow-sm">
+                      <p className="text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">RUT Empresa</p>
+                      <p className="text-base font-bold text-gray-900">{selectedUser.rutEmpresa || '-'}</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 shadow-sm">
+                      <p className="text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Dirección</p>
+                      <p className="text-base font-semibold text-gray-900">{selectedUser.direccionEmpresa || '-'}</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 shadow-sm">
+                      <p className="text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Correo Empresarial</p>
+                      <p className="text-base font-semibold text-gray-900 break-all">{selectedUser.correoEmpresa || selectedUser.email || '-'}</p>
+                    </div>
+                    <div className="bg-white rounded-lg p-4 shadow-sm">
+                      <p className="text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide">Contacto / Teléfono Empresa</p>
+                      <p className="text-base font-bold text-gray-900">{selectedUser.telefonoEmpresa || selectedUser.telefono || '-'}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Botón Cerrar */}
+                <div className="flex justify-end pt-2">
+                  <button 
+                    onClick={() => setShowInfoModal(false)} 
+                    className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all shadow-lg hover:shadow-xl active:scale-[0.98]"
+                  >
+                    Cerrar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </main>
     </div>

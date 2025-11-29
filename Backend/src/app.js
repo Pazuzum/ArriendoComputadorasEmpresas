@@ -6,6 +6,7 @@ import cors from "cors";
 import authRoutes from "./rutas/auth.rutas.js";
 import cotizacionRoutes from "./rutas/cotizacion.rutas.js";
 import productoRoutes from "./rutas/producto.rutas.js";
+import usuarioRoutes from "./rutas/usuario.rutas.js";
 import { crearRoles, crearProductosIniciales } from "./libs/initial.js";
 import reservaRoutes from './rutas/reserva.rutas.js';
 import { startReservaWorker } from './libs/reservaWorker.js';
@@ -32,6 +33,7 @@ app.use(cookieParser());
 app.use("/api",authRoutes);
 app.use("/api", cotizacionRoutes);
 app.use("/api", productoRoutes);
+app.use("/api", usuarioRoutes);
 app.use('/api', reservaRoutes);
 
 // start background worker to expire reservas

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useCotizacion } from '../Context/CotizacionContext.jsx'
 import { Link } from 'react-router-dom'
+import { useToast } from './Toast.jsx'
 
 // Tarjeta de producto con carrusel de imágenes, selector de cantidad y botón de agregar a cotización
 const ProductCard = ({ producto }) => {
@@ -9,6 +10,7 @@ const ProductCard = ({ producto }) => {
     const [added, setAdded] = useState(false)
     const [cantidad, setCantidad] = useState(1)
     const { addToQuote } = useCotizacion()
+    const { showToast } = useToast()
 
     // Carrusel automático de imágenes cada 3 segundos
     useEffect(() => {
@@ -96,14 +98,27 @@ const ProductCard = ({ producto }) => {
                                 type="number"
                                 className="flex-1 text-center px-3 py-3 outline-none font-bold text-gray-900 bg-white border-x-2 border-gray-200"
                                 value={cantidad}
-                                onChange={(e) => setCantidad(Number(e.target.value) || 1)}
+                                onChange={(e) => {
+                                    const val = e.target.value
+                                    if (val === '') {
+                                        setCantidad('')
+                                    } else {
+                                        setCantidad(Number(val) || 1)
+                                    }
+                                }}
+                                onBlur={(e) => {
+                                    if (e.target.value === '' || Number(e.target.value) < 1) {
+                                        setCantidad(1)
+                                    }
+                                }}
                                 min={1}
                                 max={producto.disponibilidad ?? undefined}
                             />
                             <button
                                 onClick={() => setCantidad((c) => {
                                     const max = producto.disponibilidad ?? Infinity
-                                    return Math.min(max, c + 1)
+                                    const current = Number(c) || 0
+                                    return Math.min(max, current + 1)
                                 })}
                                 className="px-4 py-3 bg-white hover:bg-blue-50 transition font-bold text-gray-700"
                                 aria-label="Aumentar"
@@ -115,12 +130,26 @@ const ProductCard = ({ producto }) => {
                     {/* Botón para agregar producto a la cotización */}
                     <button
                         onClick={() => {
-                            if ((producto.disponibilidad ?? 0) <= 0) return
+                            if ((producto.disponibilidad ?? 0) <= 0) {
+                                showToast('Este producto está agotado', 'error')
+                                return
+                            }
+                            
                             const qty = Math.max(1, Math.floor(cantidad) || 1)
-                            const max = producto.disponibilidad ?? Infinity
-                            const toAdd = Math.min(qty, max)
-                            addToQuote(producto, toAdd)
-                            if (typeof producto.onReserve === 'function') producto.onReserve(toAdd)
+                            const max = producto.disponibilidad ?? 0
+                            
+                            // Validar si la cantidad solicitada excede el stock
+                            if (qty > max) {
+                                showToast(
+                                    `Solo hay ${max} unidad${max !== 1 ? 'es' : ''} disponible${max !== 1 ? 's' : ''} de este producto. No puedes agregar ${qty} unidades.`,
+                                    'error'
+                                )
+                                setCantidad(max) // Ajustar al máximo disponible
+                                return
+                            }
+                            
+                            addToQuote(producto, qty)
+                            if (typeof producto.onReserve === 'function') producto.onReserve(qty)
                             setAdded(true)
                             setTimeout(() => setAdded(false), 2500)
                             setCantidad(1)

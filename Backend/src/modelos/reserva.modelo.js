@@ -20,7 +20,7 @@ const reservaSchema = new mongoose.Schema({
     valor: Number,
     unidad: { type: String, enum: ['dias','semanas','meses'], default: 'dias' }
   },
-  estado: { type: String, enum: ['PENDIENTE','RESERVADA','CONFIRMADA','CANCELADA','EXPIRADA'], default: 'PENDIENTE' },
+  estado: { type: String, enum: ['PENDIENTE','RESERVADA','CONFIRMADA','CANCELADA','EXPIRADA','DEVUELTA'], default: 'PENDIENTE' },
   expiresAt: { type: Date },
   createdAt: { type: Date, default: Date.now },
   notas: String,
@@ -28,6 +28,14 @@ const reservaSchema = new mongoose.Schema({
     provider: String,
     intentId: String,
     status: String,
+    cardType: String,
+    lastFour: String,
+    cardHolder: String,
+    paidAt: Date,
+  },
+  firmaCliente: { 
+    type: String, // Data URL de la firma (base64)
+    required: false 
   },
 }, { versionKey: false });
 

@@ -1,10 +1,12 @@
 import ProductCard from "../componentes/CardProduc.jsx";
 import Header from "../componentes/Header.jsx";
+import { useToast } from "../componentes/Toast.jsx";
 
 import { useState, useEffect } from "react";
 import { getProductos } from "../api/productos.js";
 
 const Catalogo = () => {
+    const { ToastContainer } = useToast();
     const [productosState, setProductosState] = useState([]);
     const [filteredProductos, setFilteredProductos] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -98,6 +100,27 @@ const Catalogo = () => {
     };
 
     useEffect(()=>{ fetchProductos(); }, []);
+
+    // Refrescar productos cuando el usuario vuelve a la página
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (!document.hidden) {
+                fetchProductos();
+            }
+        };
+
+        const handleFocus = () => {
+            fetchProductos();
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        window.addEventListener('focus', handleFocus);
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('focus', handleFocus);
+        };
+    }, []);
 
     useEffect(() => {
         aplicarFiltros();
@@ -249,6 +272,7 @@ const Catalogo = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-50">
+            <ToastContainer />
             <Header />
             
             {/* Hero Section mejorado */}

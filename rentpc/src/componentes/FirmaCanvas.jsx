@@ -18,15 +18,40 @@ const FirmaCanvas = ({ onFirmaGuardada, label = 'Firma aquí' }) => {
         }
     }, [])
 
-    // Iniciar trazado de firma
-    const startDrawing = (e) => {
+    // Obtener coordenadas correctas del canvas considerando la escala
+    const getCanvasCoordinates = (e) => {
         const canvas = canvasRef.current
-        const ctx = canvas.getContext('2d')
         const rect = canvas.getBoundingClientRect()
         
+        // Obtener las coordenadas del evento (mouse o touch)
+        let clientX, clientY
+        if (e.touches && e.touches.length > 0) {
+            clientX = e.touches[0].clientX
+            clientY = e.touches[0].clientY
+        } else {
+            clientX = e.clientX
+            clientY = e.clientY
+        }
+        
+        // Calcular la escala entre el tamaño renderizado y el tamaño real del canvas
+        const scaleX = canvas.width / rect.width
+        const scaleY = canvas.height / rect.height
+        
+        // Convertir coordenadas de píxeles de pantalla a píxeles del canvas
+        const x = (clientX - rect.left) * scaleX
+        const y = (clientY - rect.top) * scaleY
+        
+        return { x, y }
+    }
+
+    // Iniciar trazado de firma
+    const startDrawing = (e) => {
+        e.preventDefault()
+        const canvas = canvasRef.current
+        const ctx = canvas.getContext('2d')
+        const { x, y } = getCanvasCoordinates(e)
+        
         ctx.beginPath()
-        const x = e.clientX - rect.left || e.touches?.[0]?.clientX - rect.left
-        const y = e.clientY - rect.top || e.touches?.[0]?.clientY - rect.top
         ctx.moveTo(x, y)
         setIsDrawing(true)
     }
@@ -34,13 +59,11 @@ const FirmaCanvas = ({ onFirmaGuardada, label = 'Firma aquí' }) => {
     // Dibujar firma mientras se mueve el cursor/dedo
     const draw = (e) => {
         if (!isDrawing) return
+        e.preventDefault()
         
         const canvas = canvasRef.current
         const ctx = canvas.getContext('2d')
-        const rect = canvas.getBoundingClientRect()
-        
-        const x = e.clientX - rect.left || e.touches?.[0]?.clientX - rect.left
-        const y = e.clientY - rect.top || e.touches?.[0]?.clientY - rect.top
+        const { x, y } = getCanvasCoordinates(e)
         
         ctx.lineTo(x, y)
         ctx.stroke()
@@ -72,7 +95,7 @@ const FirmaCanvas = ({ onFirmaGuardada, label = 'Firma aquí' }) => {
             <div className="border-2 border-gray-300 rounded-lg overflow-hidden bg-white">
                 <canvas
                     ref={canvasRef}
-                    width={400}
+                    width={600}
                     height={200}
                     className="w-full cursor-crosshair touch-none"
                     onMouseDown={startDrawing}

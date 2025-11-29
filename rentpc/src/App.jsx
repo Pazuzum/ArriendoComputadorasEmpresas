@@ -6,8 +6,8 @@ import CotizacionResumen from './paginas/CotizacionResumen.jsx'
 import Login from './paginas/Login.jsx'
 import Register from './paginas/Register.jsx'
 import AdminPanel from './paginas/AdminPanel.jsx'
+import AdminCotizaciones from './paginas/AdminCotizaciones.jsx'
 import ProtectedAdmin from './paginas/ProtectedAdmin.jsx'
-import AdminProducts from './paginas/AdminProducts.jsx'
 import { AuthProvider } from './Context/authContext.jsx'
 import Nosotros from './paginas/Nosotros.jsx'
 import { CotizacionProvider } from './Context/CotizacionContext.jsx'
@@ -49,9 +49,9 @@ function App() {
                 <AdminPanel />
               </ProtectedAdmin>
             } />
-            <Route path="/admin/productos" element={
+            <Route path="/admin/cotizaciones" element={
               <ProtectedAdmin>
-                <AdminProducts />
+                <AdminCotizaciones />
               </ProtectedAdmin>
             } />
           </Routes>
