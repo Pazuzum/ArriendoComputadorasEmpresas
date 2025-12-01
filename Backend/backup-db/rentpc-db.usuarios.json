@@ -1,0 +1,250 @@
+[{
+  "_id": {
+    "$oid": "68f627f2356b1e613b706a58"
+  },
+  "nombre": "fabian",
+  "email": "fabian.illa14@gmail.com",
+  "contra": "$2b$08$caWvroBu/N5UjE6MkwHhYOsmKRzD4gnfDdelWsguU4iCssgAiY/7i",
+  "direccion": "1249 Hanga roa, Pudahuel",
+  "telefono": "954476887",
+  "roles": [
+    {
+      "$oid": "68d2dc4520145a3d92547965"
+    }
+  ],
+  "estado": "Activo",
+  "createdAt": {
+    "$date": "2025-10-20T12:15:46.681Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-13T16:20:27.217Z"
+  },
+  "telefonoContacto": ""
+},
+{
+  "_id": {
+    "$oid": "68f62ac975e482b3e94e5516"
+  },
+  "nombre": "Prueba",
+  "email": "prueba1@gmail.com",
+  "contra": "$2b$08$xUKn1tanJQ9X5MEhYTL9kOhlYlaHiklj.XaXFMCJeoV6NRAE8vnc6",
+  "direccion": "calla falsa 123",
+  "telefono": "954476433",
+  "roles": [
+    {
+      "$oid": "68d2dc4520145a3d92547964"
+    }
+  ],
+  "estado": "Activo",
+  "createdAt": {
+    "$date": "2025-10-20T12:27:53.043Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-20T12:28:25.887Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68f62b7375e482b3e94e5585"
+  },
+  "nombre": "naxito",
+  "email": "naxito1@gmail.com",
+  "contra": "$2b$08$nAvg.cb.GsnCqA19xYKR2OZF2ijJa4Za9y87lcs/n9Uy0jVce75gi",
+  "direccion": "1223 asjkfjksafasas",
+  "telefono": "954476887",
+  "roles": [
+    {
+      "$oid": "68d2dc4520145a3d92547964"
+    }
+  ],
+  "estado": "Activo",
+  "createdAt": {
+    "$date": "2025-10-20T12:30:43.200Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-20T12:44:07.045Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68f63a7d1969f5f66ce08cfb"
+  },
+  "nombre": "juanito",
+  "email": "juanito@gmail.com",
+  "contra": "$2b$08$nRpJiRmdQPT4CFZcc3juaOcyO.M0oaXK.S2yFpv7q7PXm3MQHJDhq",
+  "direccion": "1249 Hanga roa",
+  "telefono": "954476887",
+  "roles": [
+    {
+      "$oid": "68d2dc4520145a3d92547964"
+    }
+  ],
+  "estado": "Activo",
+  "createdAt": {
+    "$date": "2025-10-20T13:34:53.150Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-29T20:09:24.351Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68f9212762df640816dd8dec"
+  },
+  "nombre": "Daniel",
+  "nombreEmpresa": "AlvaroINC",
+  "email": "Daniel@gmail.com",
+  "contra": "$2b$08$jRHd2CIm1POoA3wpvxWGjeKOjCQZGICTioo0ToXrqw5kreMVnIavq",
+  "telefonoContacto": "954476887",
+  "rutEmpresa": "218767632",
+  "roles": [
+    {
+      "$oid": "68d2dc4520145a3d92547964"
+    }
+  ],
+  "estado": "Inactivo",
+  "createdAt": {
+    "$date": "2025-10-22T18:23:35.098Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-22T18:23:35.098Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68f933db62df640816dd8e70"
+  },
+  "nombre": "Alvaro",
+  "nombreEmpresa": "AlvaroINC",
+  "email": "Alvaro1@gmail.com",
+  "contra": "$2b$08$SaSKlW.sZunG.vhebzB06udwev2B0NTK8rpe2V52/VVIyAmzHquRC",
+  "telefonoContacto": "954476887",
+  "rutEmpresa": "210988763",
+  "roles": [
+    {
+      "$oid": "68d2dc4520145a3d92547964"
+    }
+  ],
+  "estado": "Inactivo",
+  "createdAt": {
+    "$date": "2025-10-22T19:43:23.819Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-22T20:37:54.185Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68f97738319fa075670230ee"
+  },
+  "nombre": "matias",
+  "nombreEmpresa": "MatiasINC",
+  "email": "matias@gmail.com",
+  "contra": "$2b$08$BAFCnmSbqX6oYWCOP5YSdu.fLdzj/G6.pY63jzgBcNnENULW0yhfG",
+  "telefonoContacto": "954476887",
+  "rutEmpresa": "219838298",
+  "roles": [
+    {
+      "$oid": "68d2dc4520145a3d92547964"
+    }
+  ],
+  "estado": "Inactivo",
+  "createdAt": {
+    "$date": "2025-10-23T00:30:48.089Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-23T00:30:48.089Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69243fb04a5a343d4ff75607"
+  },
+  "nombre": "Ingnacio Moya",
+  "nombreEmpresa": "IgnacioINC",
+  "email": "ignacio123@gmail.com",
+  "contra": "$2b$08$mQCjF1UkDzY3HeJ8H.e2LOWbdsMhcPuqilvopvoyKVNhVouBWLk8C",
+  "telefonoContacto": "+56954477665",
+  "rutEmpresa": "21878376-3",
+  "roles": [
+    {
+      "$oid": "68d2dc4520145a3d92547964"
+    }
+  ],
+  "estado": "Activo",
+  "createdAt": {
+    "$date": "2025-11-24T11:21:20.820Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-24T12:18:15.701Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69275d9238e4adc36ecc8ba5"
+  },
+  "nombre": "Hector perez",
+  "nombreEmpresa": "HectorINC",
+  "email": "hector@gmail.com",
+  "contra": "$2b$08$kGpvP/8RLnDxP3GyDR14Se2WLvfJDZNX1n5dmfILKx2/pHYeCSI3C",
+  "telefonoContacto": "+56958787683",
+  "rutEmpresa": "193656752",
+  "roles": [
+    {
+      "$oid": "68d2dc4520145a3d92547964"
+    }
+  ],
+  "estado": "Activo",
+  "createdAt": {
+    "$date": "2025-11-26T20:05:38.830Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-26T20:10:21.750Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "692caa589f8511ed1115db2b"
+  },
+  "nombre": "pruebiña",
+  "nombreEmpresa": "pruebiñaINC",
+  "email": "prueba3@gmail.com",
+  "contra": "$2b$08$83MZZBbYYkhRcXrcWSA1AOmSA9IILDvOScPa9z2j8ZE0ZUxVZOdqK",
+  "telefonoContacto": "+56954476887",
+  "rutEmpresa": "210802053",
+  "roles": [
+    {
+      "$oid": "68d2dc4520145a3d92547964"
+    }
+  ],
+  "estado": "Inactivo",
+  "createdAt": {
+    "$date": "2025-11-30T20:34:32.651Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-30T20:34:32.651Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "692cafef9f8511ed1115dc75"
+  },
+  "nombre": "Daniel Alcatraz",
+  "nombreEmpresa": "DanielINC",
+  "email": "daniel@gmail.com",
+  "contra": "$2b$08$jUYBfjyFxw2aQfNFvdZp2eEpKTdZw5rIUM8BS3n4Y/EpTfVW1qSaa",
+  "telefonoContacto": "+56954476887",
+  "rutEmpresa": "210909373",
+  "roles": [
+    {
+      "$oid": "68d2dc4520145a3d92547964"
+    }
+  ],
+  "estado": "Activo",
+  "createdAt": {
+    "$date": "2025-11-30T20:58:23.282Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-30T21:02:53.889Z"
+  }
+}]

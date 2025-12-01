@@ -1,0 +1,679 @@
+[{
+  "_id": {
+    "$oid": "691b460f815d887f8ec2ba31"
+  },
+  "empresaId": {
+    "$oid": "68f627f2356b1e613b706a58"
+  },
+  "contacto": {
+    "nombre": "N/A",
+    "email": "fabian.illa14@gmail.com",
+    "telefono": "N/A"
+  },
+  "items": [
+    {
+      "productId": {
+        "$oid": "690a7a149b5b48db37c8d163"
+      },
+      "nombre": "Notebook Gamer Acer Nitro V15 ANV15-51-53TQ-1 Intel Core i5 8 Núcleos 16GB RAM 512GB SSD NVIDIA RTX 3050",
+      "precio": 2000,
+      "cantidad": 6,
+      "_id": {
+        "$oid": "691b460f815d887f8ec2ba32"
+      }
+    }
+  ],
+  "total": 36000,
+  "duracion": {
+    "valor": 3,
+    "unidad": "dias"
+  },
+  "estado": "DEVUELTA",
+  "expiresAt": {
+    "$date": "2025-11-20T15:58:07.919Z"
+  },
+  "notas": "Arriendo desde 2025-11-17 hasta 2025-11-20",
+  "createdAt": {
+    "$date": "2025-11-17T15:58:07.925Z"
+  },
+  "pago": {
+    "provider": "simulado",
+    "status": "succeeded",
+    "cardType": "Visa",
+    "lastFour": "4444",
+    "cardHolder": "FABIAN ILLANES ",
+    "paidAt": {
+      "$date": "2025-11-17T15:58:22.622Z"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "691b468a815d887f8ec2ba97"
+  },
+  "empresaId": {
+    "$oid": "68f62b7375e482b3e94e5585"
+  },
+  "contacto": {
+    "nombre": "N/A",
+    "email": "naxito1@gmail.com",
+    "telefono": "N/A"
+  },
+  "items": [
+    {
+      "productId": {
+        "$oid": "690a7a149b5b48db37c8d163"
+      },
+      "nombre": "Notebook Gamer Acer Nitro V15 ANV15-51-53TQ-1 Intel Core i5 8 Núcleos 16GB RAM 512GB SSD NVIDIA RTX 3050",
+      "precio": 2000,
+      "cantidad": 6,
+      "_id": {
+        "$oid": "691b468a815d887f8ec2ba98"
+      }
+    }
+  ],
+  "total": 36000,
+  "duracion": {
+    "valor": 3,
+    "unidad": "dias"
+  },
+  "estado": "CONFIRMADA",
+  "expiresAt": {
+    "$date": "2025-11-20T16:00:10.545Z"
+  },
+  "notas": "Arriendo desde 2025-11-17 hasta 2025-11-20",
+  "createdAt": {
+    "$date": "2025-11-17T16:00:10.546Z"
+  },
+  "pago": {
+    "provider": "simulado",
+    "status": "succeeded",
+    "cardType": "Visa",
+    "lastFour": "4444",
+    "cardHolder": "NAXITO PEREZ",
+    "paidAt": {
+      "$date": "2025-11-17T16:00:24.852Z"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "691b4a6ad7bf51cb53552555"
+  },
+  "empresaId": {
+    "$oid": "68f62b7375e482b3e94e5585"
+  },
+  "contacto": {
+    "nombre": "N/A",
+    "email": "naxito1@gmail.com",
+    "telefono": "N/A"
+  },
+  "items": [
+    {
+      "productId": {
+        "$oid": "690a721328197d190168150b"
+      },
+      "nombre": "Notebook Lenovo IdeaPad de 15.6“ (Intel i3-N305, 8GB Ram, 512GB SSD, Windows 11 Home)",
+      "precio": 1600,
+      "cantidad": 5,
+      "_id": {
+        "$oid": "691b4a6ad7bf51cb53552556"
+      }
+    }
+  ],
+  "total": 24000,
+  "duracion": {
+    "valor": 3,
+    "unidad": "dias"
+  },
+  "estado": "CONFIRMADA",
+  "expiresAt": {
+    "$date": "2025-11-20T16:16:42.253Z"
+  },
+  "notas": "Arriendo desde 2025-11-19 hasta 2025-11-22",
+  "createdAt": {
+    "$date": "2025-11-17T16:16:42.259Z"
+  },
+  "pago": {
+    "provider": "simulado",
+    "status": "succeeded",
+    "cardType": "Visa",
+    "lastFour": "4444",
+    "cardHolder": "NAXO PEREZ",
+    "paidAt": {
+      "$date": "2025-11-17T16:16:55.557Z"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "691e1b488a0fe7703a7f9263"
+  },
+  "empresaId": {
+    "$oid": "68f627f2356b1e613b706a58"
+  },
+  "contacto": {
+    "nombre": "N/A",
+    "email": "fabian.illa14@gmail.com",
+    "telefono": "N/A"
+  },
+  "items": [
+    {
+      "productId": {
+        "$oid": "690a7a149b5b48db37c8d163"
+      },
+      "nombre": "Notebook Gamer Acer Nitro V15 ANV15-51-53TQ-1 Intel Core i5 8 Núcleos 16GB RAM 512GB SSD NVIDIA RTX 3050",
+      "precio": 2000,
+      "cantidad": 3,
+      "_id": {
+        "$oid": "691e1b488a0fe7703a7f9264"
+      }
+    }
+  ],
+  "total": 12000,
+  "duracion": {
+    "valor": 2,
+    "unidad": "dias"
+  },
+  "estado": "DEVUELTA",
+  "expiresAt": {
+    "$date": "2025-11-22T19:32:24.376Z"
+  },
+  "notas": "Arriendo desde 2025-11-20 hasta 2025-11-22",
+  "createdAt": {
+    "$date": "2025-11-19T19:32:24.381Z"
+  },
+  "pago": {
+    "provider": "simulado",
+    "status": "succeeded",
+    "cardType": "Visa",
+    "lastFour": "4444",
+    "cardHolder": "FABIAN ILLANES",
+    "paidAt": {
+      "$date": "2025-11-19T19:32:47.802Z"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "6924441e4a5a343d4ff756a5"
+  },
+  "empresaId": {
+    "$oid": "68f627f2356b1e613b706a58"
+  },
+  "contacto": {
+    "nombre": "N/A",
+    "email": "fabian.illa14@gmail.com",
+    "telefono": "N/A"
+  },
+  "items": [
+    {
+      "productId": {
+        "$oid": "690a7a149b5b48db37c8d163"
+      },
+      "nombre": "Notebook Gamer Acer Nitro V15 ANV15-51-53TQ-1 Intel Core i5 8 Núcleos 16GB RAM 512GB SSD NVIDIA RTX 3050",
+      "precio": 2000,
+      "cantidad": 5,
+      "_id": {
+        "$oid": "6924441e4a5a343d4ff756a6"
+      }
+    }
+  ],
+  "total": 40000,
+  "duracion": {
+    "valor": 4,
+    "unidad": "dias"
+  },
+  "estado": "CONFIRMADA",
+  "expiresAt": {
+    "$date": "2025-11-27T11:40:14.214Z"
+  },
+  "notas": "Arriendo desde 2025-11-24 hasta 2025-11-28",
+  "createdAt": {
+    "$date": "2025-11-24T11:40:14.216Z"
+  },
+  "pago": {
+    "provider": "simulado",
+    "status": "succeeded",
+    "cardType": "Visa",
+    "lastFour": "4343",
+    "cardHolder": "FABIAN IGNACIO ILLANES",
+    "paidAt": {
+      "$date": "2025-11-24T11:40:39.334Z"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "69244da5763c16133f0509aa"
+  },
+  "empresaId": {
+    "$oid": "68f627f2356b1e613b706a58"
+  },
+  "contacto": {
+    "nombre": "N/A",
+    "email": "fabian.illa14@gmail.com",
+    "telefono": "N/A"
+  },
+  "items": [
+    {
+      "productId": {
+        "$oid": "690a713028197d19016814eb"
+      },
+      "nombre": "Notebook HP 245 G10 Ryzen 3 7320U 8GB 256GB SSD 14 W11H",
+      "precio": 1500,
+      "cantidad": 4,
+      "_id": {
+        "$oid": "69244da5763c16133f0509ab"
+      }
+    }
+  ],
+  "total": 6000,
+  "duracion": {
+    "valor": 1,
+    "unidad": "dias"
+  },
+  "estado": "CONFIRMADA",
+  "expiresAt": {
+    "$date": "2025-11-27T12:20:53.355Z"
+  },
+  "notas": "Arriendo desde 2025-11-24 hasta 2025-11-25",
+  "createdAt": {
+    "$date": "2025-11-24T12:20:53.360Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69244da6763c16133f0509af"
+  },
+  "empresaId": {
+    "$oid": "68f627f2356b1e613b706a58"
+  },
+  "contacto": {
+    "nombre": "N/A",
+    "email": "fabian.illa14@gmail.com",
+    "telefono": "N/A"
+  },
+  "items": [
+    {
+      "productId": {
+        "$oid": "690a713028197d19016814eb"
+      },
+      "nombre": "Notebook HP 245 G10 Ryzen 3 7320U 8GB 256GB SSD 14 W11H",
+      "precio": 1500,
+      "cantidad": 4,
+      "_id": {
+        "$oid": "69244da6763c16133f0509b0"
+      }
+    }
+  ],
+  "total": 6000,
+  "duracion": {
+    "valor": 1,
+    "unidad": "dias"
+  },
+  "estado": "CONFIRMADA",
+  "expiresAt": {
+    "$date": "2025-11-27T12:20:54.721Z"
+  },
+  "notas": "Arriendo desde 2025-11-24 hasta 2025-11-25",
+  "createdAt": {
+    "$date": "2025-11-24T12:20:54.722Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69244da6763c16133f0509b4"
+  },
+  "empresaId": {
+    "$oid": "68f627f2356b1e613b706a58"
+  },
+  "contacto": {
+    "nombre": "N/A",
+    "email": "fabian.illa14@gmail.com",
+    "telefono": "N/A"
+  },
+  "items": [
+    {
+      "productId": {
+        "$oid": "690a713028197d19016814eb"
+      },
+      "nombre": "Notebook HP 245 G10 Ryzen 3 7320U 8GB 256GB SSD 14 W11H",
+      "precio": 1500,
+      "cantidad": 4,
+      "_id": {
+        "$oid": "69244da6763c16133f0509b5"
+      }
+    }
+  ],
+  "total": 6000,
+  "duracion": {
+    "valor": 1,
+    "unidad": "dias"
+  },
+  "estado": "CONFIRMADA",
+  "expiresAt": {
+    "$date": "2025-11-27T12:20:54.891Z"
+  },
+  "notas": "Arriendo desde 2025-11-24 hasta 2025-11-25",
+  "createdAt": {
+    "$date": "2025-11-24T12:20:54.892Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69273bff38e4adc36ecc88e0"
+  },
+  "empresaId": {
+    "$oid": "68f627f2356b1e613b706a58"
+  },
+  "contacto": {
+    "nombre": "N/A",
+    "email": "fabian.illa14@gmail.com",
+    "telefono": "N/A"
+  },
+  "items": [
+    {
+      "productId": {
+        "$oid": "690a7a149b5b48db37c8d163"
+      },
+      "nombre": "Notebook Gamer Acer Nitro V15 ANV15-51-53TQ-1 Intel Core i5 8 Núcleos 16GB RAM 512GB SSD NVIDIA RTX 3050",
+      "precio": 2000,
+      "cantidad": 6,
+      "_id": {
+        "$oid": "69273bff38e4adc36ecc88e1"
+      }
+    },
+    {
+      "productId": {
+        "$oid": "690a713028197d19016814eb"
+      },
+      "nombre": "Notebook HP 245 G10 Ryzen 3 7320U 8GB 256GB SSD 14 W11H",
+      "precio": 1500,
+      "cantidad": 6,
+      "_id": {
+        "$oid": "69273bff38e4adc36ecc88e2"
+      }
+    },
+    {
+      "productId": {
+        "$oid": "690a612f28197d1901681410"
+      },
+      "nombre": "Notebook HP Gamer Victus 15-FA0025LA I5-12450H 8GB SSD512Gb R3050 W11h",
+      "precio": 1800,
+      "cantidad": 6,
+      "_id": {
+        "$oid": "69273bff38e4adc36ecc88e3"
+      }
+    },
+    {
+      "productId": {
+        "$oid": "690a721328197d190168150b"
+      },
+      "nombre": "Notebook Lenovo IdeaPad de 15.6“ (Intel i3-N305, 8GB Ram, 512GB SSD, Windows 11 Home)",
+      "precio": 1600,
+      "cantidad": 6,
+      "_id": {
+        "$oid": "69273bff38e4adc36ecc88e4"
+      }
+    }
+  ],
+  "total": 165600,
+  "duracion": {
+    "valor": 4,
+    "unidad": "dias"
+  },
+  "estado": "CONFIRMADA",
+  "expiresAt": {
+    "$date": "2025-11-29T17:42:23.173Z"
+  },
+  "notas": "Arriendo desde 2025-11-26 hasta 2025-11-30",
+  "createdAt": {
+    "$date": "2025-11-26T17:42:23.179Z"
+  },
+  "pago": {
+    "provider": "simulado",
+    "status": "succeeded",
+    "cardType": "Visa",
+    "lastFour": "4444",
+    "cardHolder": "FABIAN IGNACIO ILLANES",
+    "paidAt": {
+      "$date": "2025-11-26T17:42:57.150Z"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "692754a738e4adc36ecc8ab0"
+  },
+  "empresaId": {
+    "$oid": "68f627f2356b1e613b706a58"
+  },
+  "contacto": {
+    "nombre": "N/A",
+    "email": "fabian.illa14@gmail.com",
+    "telefono": "N/A"
+  },
+  "items": [
+    {
+      "productId": {
+        "$oid": "690a7a149b5b48db37c8d163"
+      },
+      "nombre": "Notebook Gamer Acer Nitro V15 ANV15-51-53TQ-1 Intel Core i5 8 Núcleos 16GB RAM 512GB SSD NVIDIA RTX 3050",
+      "precio": 2000,
+      "cantidad": 4,
+      "_id": {
+        "$oid": "692754a738e4adc36ecc8ab1"
+      }
+    },
+    {
+      "productId": {
+        "$oid": "690a713028197d19016814eb"
+      },
+      "nombre": "Notebook HP 245 G10 Ryzen 3 7320U 8GB 256GB SSD 14 W11H",
+      "precio": 1500,
+      "cantidad": 4,
+      "_id": {
+        "$oid": "692754a738e4adc36ecc8ab2"
+      }
+    },
+    {
+      "productId": {
+        "$oid": "690a612f28197d1901681410"
+      },
+      "nombre": "Notebook HP Gamer Victus 15-FA0025LA I5-12450H 8GB SSD512Gb R3050 W11h",
+      "precio": 1800,
+      "cantidad": 4,
+      "_id": {
+        "$oid": "692754a738e4adc36ecc8ab3"
+      }
+    },
+    {
+      "productId": {
+        "$oid": "690a721328197d190168150b"
+      },
+      "nombre": "Notebook Lenovo IdeaPad de 15.6“ (Intel i3-N305, 8GB Ram, 512GB SSD, Windows 11 Home)",
+      "precio": 1600,
+      "cantidad": 4,
+      "_id": {
+        "$oid": "692754a738e4adc36ecc8ab4"
+      }
+    }
+  ],
+  "total": 938400,
+  "duracion": {
+    "valor": 34,
+    "unidad": "dias"
+  },
+  "estado": "CONFIRMADA",
+  "expiresAt": {
+    "$date": "2025-11-29T19:27:35.163Z"
+  },
+  "notas": "Arriendo desde 2025-11-27 hasta 2025-12-31",
+  "createdAt": {
+    "$date": "2025-11-26T19:27:35.164Z"
+  },
+  "pago": {
+    "provider": "simulado",
+    "status": "succeeded",
+    "cardType": "Visa",
+    "lastFour": "4444",
+    "cardHolder": "JUAN RODRIGUEZ",
+    "paidAt": {
+      "$date": "2025-11-26T19:28:35.935Z"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "69275e2138e4adc36ecc8bbe"
+  },
+  "empresaId": {
+    "$oid": "68f627f2356b1e613b706a58"
+  },
+  "contacto": {
+    "nombre": "N/A",
+    "email": "fabian.illa14@gmail.com",
+    "telefono": "N/A"
+  },
+  "items": [
+    {
+      "productId": {
+        "$oid": "690a7a149b5b48db37c8d163"
+      },
+      "nombre": "Notebook Gamer Acer Nitro V15 ANV15-51-53TQ-1 Intel Core i5 8 Núcleos 16GB RAM 512GB SSD NVIDIA RTX 3050",
+      "precio": 2000,
+      "cantidad": 3,
+      "_id": {
+        "$oid": "69275e2138e4adc36ecc8bbf"
+      }
+    },
+    {
+      "productId": {
+        "$oid": "690a713028197d19016814eb"
+      },
+      "nombre": "Notebook HP 245 G10 Ryzen 3 7320U 8GB 256GB SSD 14 W11H",
+      "precio": 1500,
+      "cantidad": 3,
+      "_id": {
+        "$oid": "69275e2138e4adc36ecc8bc0"
+      }
+    },
+    {
+      "productId": {
+        "$oid": "690a612f28197d1901681410"
+      },
+      "nombre": "Notebook HP Gamer Victus 15-FA0025LA I5-12450H 8GB SSD512Gb R3050 W11h",
+      "precio": 1800,
+      "cantidad": 3,
+      "_id": {
+        "$oid": "69275e2138e4adc36ecc8bc1"
+      }
+    },
+    {
+      "productId": {
+        "$oid": "690a721328197d190168150b"
+      },
+      "nombre": "Notebook Lenovo IdeaPad de 15.6“ (Intel i3-N305, 8GB Ram, 512GB SSD, Windows 11 Home)",
+      "precio": 1600,
+      "cantidad": 3,
+      "_id": {
+        "$oid": "69275e2138e4adc36ecc8bc2"
+      }
+    }
+  ],
+  "total": 703800,
+  "duracion": {
+    "valor": 34,
+    "unidad": "dias"
+  },
+  "estado": "CONFIRMADA",
+  "expiresAt": {
+    "$date": "2025-11-29T20:08:01.666Z"
+  },
+  "notas": "Arriendo desde 2025-11-27 hasta 2025-12-31",
+  "createdAt": {
+    "$date": "2025-11-26T20:08:01.667Z"
+  },
+  "pago": {
+    "provider": "simulado",
+    "status": "succeeded",
+    "cardType": "Visa",
+    "lastFour": "4444",
+    "cardHolder": "JUAN PEREZ",
+    "paidAt": {
+      "$date": "2025-11-26T20:08:24.955Z"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "692cb0779f8511ed1115dc8b"
+  },
+  "empresaId": {
+    "$oid": "68f627f2356b1e613b706a58"
+  },
+  "contacto": {
+    "nombre": "N/A",
+    "email": "fabian.illa14@gmail.com",
+    "telefono": "N/A"
+  },
+  "items": [
+    {
+      "productId": {
+        "$oid": "690a7a149b5b48db37c8d163"
+      },
+      "nombre": "Notebook Gamer Acer Nitro V15 ANV15-51-53TQ-1 Intel Core i5 8 Núcleos 16GB RAM 512GB SSD NVIDIA RTX 3050",
+      "precio": 2000,
+      "cantidad": 3,
+      "_id": {
+        "$oid": "692cb0779f8511ed1115dc8c"
+      }
+    },
+    {
+      "productId": {
+        "$oid": "690a713028197d19016814eb"
+      },
+      "nombre": "Notebook HP 245 G10 Ryzen 3 7320U 8GB 256GB SSD 14 W11H",
+      "precio": 1500,
+      "cantidad": 3,
+      "_id": {
+        "$oid": "692cb0779f8511ed1115dc8d"
+      }
+    },
+    {
+      "productId": {
+        "$oid": "690a612f28197d1901681410"
+      },
+      "nombre": "Notebook HP Gamer Victus 15-FA0025LA I5-12450H 8GB SSD512Gb R3050 W11h",
+      "precio": 1800,
+      "cantidad": 3,
+      "_id": {
+        "$oid": "692cb0779f8511ed1115dc8e"
+      }
+    }
+  ],
+  "total": 397500,
+  "duracion": {
+    "valor": 25,
+    "unidad": "dias"
+  },
+  "estado": "DEVUELTA",
+  "expiresAt": {
+    "$date": "2025-12-03T21:00:39.855Z"
+  },
+  "notas": "Arriendo desde 2025-11-30 hasta 2025-12-25",
+  "createdAt": {
+    "$date": "2025-11-30T21:00:39.857Z"
+  },
+  "pago": {
+    "provider": "simulado",
+    "status": "succeeded",
+    "cardType": "Visa",
+    "lastFour": "4444",
+    "cardHolder": "DANIEL ALCRATRAZ",
+    "paidAt": {
+      "$date": "2025-11-30T21:01:10.172Z"
+    }
+  }
+}]

@@ -1,0 +1,206 @@
+[{
+  "_id": {
+    "$oid": "68f7e060df6e349cc057f4bb"
+  },
+  "contacto": {
+    "nombre": "N/A",
+    "email": "N/A",
+    "telefono": "N/A"
+  },
+  "items": [
+    {
+      "productId": null,
+      "nombre": "NOTEBOOK DELL CORE I5",
+      "precio": 45000,
+      "cantidad": 2,
+      "_id": {
+        "$oid": "68f7e060df6e349cc057f4bc"
+      }
+    }
+  ],
+  "total": 90000,
+  "estado": "PENDIENTE",
+  "notas": "Enviado desde la app",
+  "createdAt": {
+    "$date": "2025-10-21T19:34:56.897Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-21T19:34:56.897Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68f7e19cdf6e349cc057f4dc"
+  },
+  "contacto": {
+    "nombre": "N/A",
+    "email": "N/A",
+    "telefono": "N/A"
+  },
+  "items": [
+    {
+      "productId": null,
+      "nombre": "NOTEBOOK DELL CORE I5",
+      "precio": 45000,
+      "cantidad": 1,
+      "_id": {
+        "$oid": "68f7e19cdf6e349cc057f4dd"
+      }
+    }
+  ],
+  "total": 45000,
+  "estado": "PENDIENTE",
+  "notas": "Enviado desde la app",
+  "createdAt": {
+    "$date": "2025-10-21T19:40:12.807Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-21T19:40:12.807Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68f7e9efdf6e349cc057f563"
+  },
+  "contacto": {
+    "nombre": "N/A",
+    "email": "N/A",
+    "telefono": "N/A"
+  },
+  "items": [
+    {
+      "productId": null,
+      "nombre": "NOTEBOOK DELL CORE I5",
+      "precio": 45000,
+      "cantidad": 10,
+      "_id": {
+        "$oid": "68f7e9efdf6e349cc057f564"
+      }
+    },
+    {
+      "productId": null,
+      "nombre": "NOTEBOOK HP",
+      "precio": 40000,
+      "cantidad": 5,
+      "_id": {
+        "$oid": "68f7e9efdf6e349cc057f565"
+      }
+    }
+  ],
+  "total": 650000,
+  "estado": "PENDIENTE",
+  "notas": "Enviado desde la app",
+  "createdAt": {
+    "$date": "2025-10-21T20:15:43.554Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-21T20:15:43.554Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68f7ea0cdf6e349cc057f56b"
+  },
+  "contacto": {
+    "nombre": "N/A",
+    "email": "N/A",
+    "telefono": "N/A"
+  },
+  "items": [
+    {
+      "productId": null,
+      "nombre": "NOTEBOOK DELL CORE I5",
+      "precio": 45000,
+      "cantidad": 1,
+      "_id": {
+        "$oid": "68f7ea0cdf6e349cc057f56c"
+      }
+    }
+  ],
+  "total": 45000,
+  "estado": "PENDIENTE",
+  "notas": "Enviado desde la app",
+  "createdAt": {
+    "$date": "2025-10-21T20:16:12.715Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-21T20:16:12.715Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68f7f71bb0096ac44235d23e"
+  },
+  "contacto": {
+    "nombre": "N/A",
+    "email": "N/A",
+    "telefono": "N/A"
+  },
+  "items": [
+    {
+      "productId": null,
+      "nombre": "NOTEBOOK DELL CORE I5",
+      "precio": 45000,
+      "cantidad": 1,
+      "_id": {
+        "$oid": "68f7f71bb0096ac44235d23f"
+      }
+    },
+    {
+      "productId": null,
+      "nombre": "NOTEBOOK HP",
+      "precio": 40000,
+      "cantidad": 1,
+      "_id": {
+        "$oid": "68f7f71bb0096ac44235d240"
+      }
+    }
+  ],
+  "total": 85000,
+  "duracion": {
+    "valor": 1,
+    "unidad": "dias"
+  },
+  "estado": "PENDIENTE",
+  "notas": "Enviado desde la app",
+  "createdAt": {
+    "$date": "2025-10-21T21:11:55.579Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-21T21:11:55.579Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "68f7f74eb0096ac44235d24e"
+  },
+  "contacto": {
+    "nombre": "N/A",
+    "email": "N/A",
+    "telefono": "N/A"
+  },
+  "items": [
+    {
+      "productId": null,
+      "nombre": "NOTEBOOK DELL CORE I5",
+      "precio": 45000,
+      "cantidad": 1,
+      "_id": {
+        "$oid": "68f7f74eb0096ac44235d24f"
+      }
+    }
+  ],
+  "total": 45000,
+  "duracion": {
+    "valor": 1,
+    "unidad": "dias"
+  },
+  "estado": "PENDIENTE",
+  "notas": "Enviado desde la app",
+  "createdAt": {
+    "$date": "2025-10-21T21:12:46.697Z"
+  },
+  "updatedAt": {
+    "$date": "2025-10-21T21:12:46.697Z"
+  }
+}]

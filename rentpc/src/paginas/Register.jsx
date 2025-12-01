@@ -109,10 +109,14 @@ const Register = () => {
                                         <input
                                             type="password"
                                             placeholder="••••••••"
-                                            {...register('contra', { required: 'La contraseña es requerida', minLength: { value: 6, message: 'Mínimo 6 caracteres' } })}
+                                            {...register('contra', {
+                                                required: 'La contraseña es requerida',
+                                                minLength: { value: 8, message: 'Mínimo 8 caracteres' }
+                                            })}
                                             className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition"
                                         />
                                         {errors.contra && <p className="text-sm text-red-600 mt-1.5">{errors.contra.message}</p>}
+                                        <p className="text-xs text-gray-500 mt-1">Debe tener al menos 8 caracteres para cumplir con la política del backend.</p>
                                     </div>
                                 </div>
 

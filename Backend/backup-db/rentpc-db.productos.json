@@ -1,0 +1,95 @@
+[{
+  "_id": {
+    "$oid": "690a612f28197d1901681410"
+  },
+  "nombre": "Notebook HP Gamer Victus 15-FA0025LA I5-12450H 8GB SSD512Gb R3050 W11h",
+  "descripcion": "Procesador: INTEL Core i5\nMemoria RAM: 8GB\nTipo de Almacenamiento: SSD\nTarjeta de Video: NVIDIA\nPantalla: 15.6 Pulgadas\nSistema Operativo: Windows 11 Home\nCapacidad de Disco Duro: 512 GB\nColor: gris",
+  "precio": 1800,
+  "imgs": [
+    "https://res.cloudinary.com/djx6viedj/image/upload/t_trimmed_square_512/mriukfwgp4xciflknpu3fjxraxfc?_a=BACCd2Ev"
+  ],
+  "disponibilidad": 37,
+  "color": "",
+  "createdAt": {
+    "$date": "2025-11-04T20:25:19.635Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-30T21:02:34.960Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690a713028197d19016814eb"
+  },
+  "nombre": "Notebook HP 245 G10 Ryzen 3 7320U 8GB 256GB SSD 14 W11H",
+  "descripcion": "Procesador: AMD Ryzen 3\nMemoria RAM: 8GB\nTipo de Almacenamiento: SSD\nTarjeta de Video: Integrada\nPantalla: 14 Pulgadas\nSistema Operativo: Windows 11 Home\nCapacidad de Disco Duro: 256 GB\nColor: Gris",
+  "precio": 1500,
+  "imgs": [
+    "https://scglobal.cl/4430-home_default/notebook-hp-245-g10-ryzen-3-7320u-8gb-256gb-ssd-14-w11h.jpg"
+  ],
+  "disponibilidad": 25,
+  "color": "",
+  "createdAt": {
+    "$date": "2025-11-04T21:33:36.708Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-30T21:02:34.957Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690a721328197d190168150b"
+  },
+  "nombre": "Notebook Lenovo IdeaPad de 15.6“ (Intel i3-N305, 8GB Ram, 512GB SSD, Windows 11 Home)",
+  "descripcion": "Capacidad de Almacenamiento: 512 GB\nProcesador: i3\nRAM: 8 GB\nResolución: Full HD (1920x1080)\nSistema Operativo: Windows 11 Home\nTamaño de pantalla (\"): 15.6\nColor: Gris claro",
+  "precio": 1600,
+  "imgs": [
+    "https://cdnx.jumpseller.com/notebook-store/image/48790474/resize/540/540?1755880995"
+  ],
+  "disponibilidad": 32,
+  "color": "",
+  "createdAt": {
+    "$date": "2025-11-04T21:37:23.563Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-26T20:08:01.674Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "690a7a149b5b48db37c8d163"
+  },
+  "nombre": "Notebook Gamer Acer Nitro V15 ANV15-51-53TQ-1 Intel Core i5 8 Núcleos 16GB RAM 512GB SSD NVIDIA RTX 3050",
+  "descripcion": "Marca procesador notebook: Intel\nMemoria RAM: 16GB\nCapacidad de almacenamiento: 512 GB\nTipo de GPU: RTX 3050\nTamaño de la pantalla: 15.6\nNúcleos del procesador: Octa core\nColor: Negro",
+  "precio": 2000,
+  "imgs": [
+    "https://media.falabella.com/falabellaCL/17099057_1/w=1500,h=1500,fit=pad"
+  ],
+  "disponibilidad": 32,
+  "color": "",
+  "createdAt": {
+    "$date": "2025-11-04T22:11:32.622Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-30T21:02:34.955Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "692cab2f9f8511ed1115dbc9"
+  },
+  "nombre": "PC Gamer Ryzen 5 5500 | RTX 3050 | 16GB | 500GB m.2|",
+  "descripcion": "Procesador:  Ryzen 5 5500\nTarjeta de Video:  RTX 3050 6GB\n Placa Madre:  A520 DDR4\n Memoria RAM:  1x16GB 3200MHZ\n Disco SSD:  500 GB\nFuente de Poder:  500W Plus Bronze\n Sistema Operativo: Windows 11\n Conectividad: Ethernet",
+  "precio": 2200,
+  "imgs": [
+    "https://http2.mlstatic.com/D_NQ_NP_2X_678875-MLC97785992030_112025-T.webp"
+  ],
+  "disponibilidad": 50,
+  "color": "",
+  "createdAt": {
+    "$date": "2025-11-30T20:38:07.640Z"
+  },
+  "updatedAt": {
+    "$date": "2025-11-30T20:40:28.084Z"
+  }
+}]
